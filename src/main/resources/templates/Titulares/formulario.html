@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title th:text="${titular.id == null ? 'Alta de Titular' : 'Editar Titular'}">Formulario</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow rounded-3">
+                <div class="card-body">
+
+                    <h2 class="text-center mb-4"
+                        th:text="${titular.id == null ? 'Alta de Titular' : 'Editar Titular'}">Título</h2>
+
+                    <!--  🔑 id oculto: sólo tendrá valor al editar -->
+                    <form th:action="@{/titulares/guardar}"
+                          th:object="${titular}" method="post" autocomplete="off">
+                        <input type="hidden" th:field="*{id}"/>
+
+                        <!-- alertas -->
+                        <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger mb-3">
+                            Revise los campos marcados en rojo.
+                        </div>
+
+                        <!-- TIPO DOCUMENTO -->
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Documento</label>
+                            <select th:field="*{tipoDocumento}" class="form-select">
+                                <option th:each="td : ${tiposDoc}"
+                                        th:value="${td}" th:text="${td}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- NRO DOC -->
+                        <div class="mb-3">
+                            <label class="form-label">Número de Documento</label>
+                            <input th:field="*{numeroDocumento}" class="form-control"
+                                   inputmode="numeric" pattern="\d{1,8}" maxlength="8">
+                        </div>
+
+                        <!-- APELLIDO / NOMBRE -->
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label class="form-label">Apellido</label>
+                                <input th:field="*{apellido}" class="form-control">
+                            </div>
+                            <div class="col mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input th:field="*{nombre}" class="form-control">
+                            </div>
+                        </div>
+
+                        <!-- FECHA -->
+                        <div class="mb-3">
+                            <label class="form-label">Fecha de Nacimiento</label>
+                            <!-- LocalDate se serializa en ISO-8601 (yyyy-MM-dd) que entiende <input date> -->
+                            <input type="date" class="form-control"
+                                   th:field="*{fechaNacimiento}"
+                                   th:value="${titular.fechaNacimiento != null
+                                 ? #temporals.format(titular.fechaNacimiento, 'yyyy-MM-dd')
+                                 : ''}">
+                        </div>
+
+                        <!-- DIRECCIÓN -->
+                        <div class="mb-3">
+                            <label class="form-label">Dirección</label>
+                            <input th:field="*{direccion}" class="form-control">
+                        </div>
+
+                        <!-- CLASE / GRUPO -->
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label class="form-label">Clase Solicitada</label>
+                                <select th:field="*{claseSolicitada}" class="form-select">
+                                    <option th:each="c : ${clasesLicencia}"
+                                            th:value="${c}" th:text="${c}"></option>
+                                </select>
+                            </div>
+                            <div class="col mb-3">
+                                <label class="form-label">Grupo Sanguíneo</label>
+                                <select th:field="*{grupoSanguineo}" class="form-select">
+                                    <option th:each="g : ${grupos}"
+                                            th:value="${g}" th:text="${g}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- FACTOR RH -->
+                        <div class="mb-3">
+                            <label class="form-label">Factor RH</label>
+                            <select th:field="*{factorRh}" class="form-select">
+                                <option th:each="f : ${factores}"
+                                        th:value="${f}"
+                                        th:text="${f == T(com.utn.santafe.gestion_licencias.model.FactorRh).POS ? '+' : '-'}"></option>
+                            </select>
+                        </div>
+
+                        <!-- DONANTE -->
+                        <div class="form-check mb-4">
+                            <input type="checkbox" th:field="*{donanteOrganos}"
+                                   class="form-check-input" id="donante">
+                            <label class="form-check-label" for="donante">Donante de Órganos</label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg" type="submit"
+                                    th:text="${titular.id == null ? 'Guardar' : 'Actualizar'}">
+                                Guardar
+                            </button>
+                            <a th:href="@{/titulares/lista}" class="btn btn-secondary btn-lg">
+                                Cancelar
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

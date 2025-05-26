@@ -1,0 +1,85 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Listado de Titulares</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="row justify-content-center">
+        <!--  ✅  ocupamos todo el ancho         ↓ -->
+        <div class="col-12">
+            <div class="card shadow rounded-3">
+                <div class="card-body">
+                    <h2 class="text-center flex-grow-1 mb-0">Listado de Titulares</h2>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <a th:href="@{/titulares/nuevo}" class="btn btn-primary">
+                            <i class="bi bi-person-plus"></i> Nuevo Titular
+                        </a>
+
+                    </div>
+
+                    <!--  table-responsive-xxl da scroll sólo en pantallas chicas -->
+                    <div class="table-responsive-xxl">
+                        <!-- table-sm reduce padding vertical -->
+                        <table class="table table-sm table-striped table-hover align-middle">
+                            <thead class="table-light text-nowrap">
+                            <tr>
+                                <th>ID</th>
+                                <th>Tipo Doc</th>
+                                <th>Nro Doc</th>
+                                <th>Apellido</th>
+                                <th>Nombre</th>
+                                <th>F. Nac.</th>
+                                <th>Clase</th>
+                                <th>Grupo</th>
+                                <th>RH</th>
+                                <th>Don.</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="titular : ${titulares}">
+                                <td th:text="${titular.id}"></td>
+                                <td th:text="${titular.tipoDocumento}"></td>
+                                <td th:text="${titular.numeroDocumento}"></td>
+                                <td th:text="${titular.apellido}"></td>
+                                <td th:text="${titular.nombre}"></td>
+                                <!-- fecha dd/MM/yyyy -->
+                                <td th:text="${#temporals.format(titular.fechaNacimiento,'dd/MM/yyyy')}"></td>
+                                <td th:text="${titular.claseSolicitada}"></td>
+                                <td th:text="${titular.grupoSanguineo}"></td>
+                                <td th:text="${titular.factorRh == T(com.utn.santafe.gestion_licencias.model.FactorRh).POS ? '+' : '-'}"></td>
+                                <td th:text="${titular.donanteOrganos ? 'Sí' : 'No'}"></td>
+
+                                <td class="text-nowrap">
+                                    <a th:href="@{/titulares/editar/{id}(id=${titular.id})}"
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a th:href="@{/titulares/eliminar/{id}(id=${titular.id})}"
+                                       class="btn btn-outline-danger btn-sm">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <tr th:if="${#lists.isEmpty(titulares)}">
+                                <td colspan="11" class="text-center text-muted">
+                                    No hay titulares registrados.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-3">
+                        <a th:href="@{/}" class="btn btn-secondary">Volver al inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head><title>Eliminar Titular</title></head>
+
+<body>
+<div layout:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow rounded-3">
+                <div class="card-body text-center">
+                    <h4 class="mb-3">¿Eliminar titular?</h4>
+                    <p class="mb-4">
+                        <strong th:text="${titular.apellido + ', ' + titular.nombre}"></strong><br>
+                        DNI&nbsp;<span th:text="${titular.numeroDocumento}"></span>
+                    </p>
+
+                    <form th:action="@{/titulares/eliminar/{id}(id=${titular.id})}" method="post">
+                        <button type="submit" class="btn btn-danger me-2">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </button>
+                        <a th:href="@{/titulares/lista}" class="btn btn-secondary">
+                            Cancelar
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
