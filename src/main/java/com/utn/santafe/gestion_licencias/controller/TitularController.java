@@ -1,6 +1,6 @@
 package com.utn.santafe.gestion_licencias.controller;
 
-import com.utn.santafe.gestion_licencias.model.Titular;
+import com.utn.santafe.gestion_licencias.model.titular.Titular;
 import com.utn.santafe.gestion_licencias.service.TitularService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +8,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import com.utn.santafe.gestion_licencias.model.TipoDocumento;
-import com.utn.santafe.gestion_licencias.model.ClaseLicencia;
-import com.utn.santafe.gestion_licencias.model.FactorRh;
-import com.utn.santafe.gestion_licencias.model.GrupoSanguineo;
+import com.utn.santafe.gestion_licencias.model.titular.TipoDocumento;
+import com.utn.santafe.gestion_licencias.model.titular.ClaseLicencia;
+import com.utn.santafe.gestion_licencias.model.titular.FactorRh;
+import com.utn.santafe.gestion_licencias.model.titular.GrupoSanguineo;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

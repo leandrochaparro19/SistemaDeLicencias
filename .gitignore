@@ -55,6 +55,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+**/application.properties
 ### VS Code ###
 .vscode/
 >>>>>>> 717d1ce (Configuracion del entorno y 1era historia alta de licencias realizada)

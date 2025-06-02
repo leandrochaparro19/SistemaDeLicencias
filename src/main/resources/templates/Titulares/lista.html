@@ -49,17 +49,24 @@
                                 <td th:text="${#temporals.format(titular.fechaNacimiento,'dd/MM/yyyy')}"></td>
                                 <td th:text="${titular.claseSolicitada}"></td>
                                 <td th:text="${titular.grupoSanguineo}"></td>
-                                <td th:text="${titular.factorRh == T(com.utn.santafe.gestion_licencias.model.FactorRh).POS ? '+' : '-'}"></td>
+                                <td th:text="${titular.factorRh == T(com.utn.santafe.gestion_licencias.model.titular.FactorRh).POS ? '+' : '-'}"></td>
                                 <td th:text="${titular.donanteOrganos ? 'Sí' : 'No'}"></td>
 
                                 <td class="text-nowrap">
                                     <a th:href="@{/titulares/editar/{id}(id=${titular.id})}"
-                                       class="btn btn-outline-primary btn-sm">
+                                       class="btn btn-outline-primary btn-sm"
+                                       title="Editar titular">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                     <a th:href="@{/titulares/eliminar/{id}(id=${titular.id})}"
-                                       class="btn btn-outline-danger btn-sm">
+                                       class="btn btn-outline-danger btn-sm"
+                                       title="Eliminar titular">
                                         <i class="bi bi-trash"></i>
+                                    </a>
+                                    <a th:href="@{/licencias/nueva/{id}(id=${titular.id})}"
+                                       class="btn btn-outline-success btn-sm"
+                                       title="Emitir Licencia">
+                                        <i class="bi bi-file-earmark-text"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -79,6 +86,13 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<div th:if="${success}" class="container mt-3">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-1"></i>
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 </div>
 </body>

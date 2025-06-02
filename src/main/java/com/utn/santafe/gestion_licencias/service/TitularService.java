@@ -1,7 +1,7 @@
 
 package com.utn.santafe.gestion_licencias.service;
 
-import com.utn.santafe.gestion_licencias.model.Titular;
+import com.utn.santafe.gestion_licencias.model.titular.Titular;
 import com.utn.santafe.gestion_licencias.repository.TitularRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

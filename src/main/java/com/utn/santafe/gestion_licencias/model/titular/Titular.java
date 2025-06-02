@@ -1,4 +1,4 @@
-package com.utn.santafe.gestion_licencias.model;
+package com.utn.santafe.gestion_licencias.model.titular;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -21,7 +21,7 @@ public class Titular {
 
     @NotBlank(message = "El número de documento es obligatorio")
     @Pattern(regexp = "\\d{1,8}", message = "Sólo dígitos (máximo 8)")
-    private String numeroDocumento;   // String para mantener ceros a la izquierda
+    private String numeroDocumento;
 
     @NotBlank(message = "El apellido es obligatorio")
     private String apellido;

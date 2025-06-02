@@ -97,7 +97,7 @@
                             <select th:field="*{factorRh}" class="form-select">
                                 <option th:each="f : ${factores}"
                                         th:value="${f}"
-                                        th:text="${f == T(com.utn.santafe.gestion_licencias.model.FactorRh).POS ? '+' : '-'}"></option>
+                                        th:text="${f == T(com.utn.santafe.gestion_licencias.model.titular.FactorRh).POS ? '+' : '-'}"></option>
                             </select>
                         </div>
 
