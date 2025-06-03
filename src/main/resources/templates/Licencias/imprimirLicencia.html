@@ -1,0 +1,351 @@
+<!--<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Imprimir Licencia</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    &lt;!&ndash; ======== Carnet estilo "Licencia de Conducir" ======== &ndash;&gt;
+    &lt;!&ndash;<div class="row justify-content-center mt-4">
+        <div class="col-md-8 col-lg-6">
+
+            <div class="card border-primary mb-4">
+                &lt;!&ndash; Cabecera de la “licencia” &ndash;&gt;
+                <div class="card-header text-center bg-primary text-white">
+                    <h3 class="mb-0">Licencia de Conducir</h3>
+                    <small>Municipalidad de Santa Fe</small>
+                </div>
+
+                <div class="card-body">
+                    &lt;!&ndash; Número y clase &ndash;&gt;
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong>No. Licencia:</strong>
+                            <span th:text="${licencia.id}"></span>
+                        </div>
+                        <div class="col-6 text-end">
+                            <strong>Clase:</strong>
+                            <span th:text="${licencia.clase}"></span>
+                        </div>
+                    </div>
+                    <hr/>
+
+                    &lt;!&ndash; Datos del titular &ndash;&gt;
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>DNI:</strong></div>
+                        <div class="col-8" th:text="${licencia.titular.numeroDocumento}"></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Apellido y Nombre:</strong></div>
+                        <div class="col-8"
+                             th:text="${licencia.titular.apellido + ', ' + licencia.titular.nombre}"></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Fecha Nac.:</strong></div>
+                        <div class="col-8"
+                             th:text="${#temporals.format(licencia.titular.fechaNacimiento, 'dd/MM/yyyy')}"></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Dirección:</strong></div>
+                        <div class="col-8" th:text="${licencia.titular.direccion}"></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Grupo Sanguíneo:</strong></div>
+                        <div class="col-8">
+                            <span th:text="${licencia.titular.grupoSanguineo}"></span>
+                            <span th:text="${licencia.titular.factorRh == T(com.utn.santafe.gestion_licencias.model.titular.FactorRh).POS ? '+' : '-'}"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Donante de Órganos:</strong></div>
+                        <div class="col-8"
+                             th:text="${licencia.titular.donanteOrganos ? 'Sí' : 'No'}"></div>
+                    </div>
+                    <hr/>
+
+                    &lt;!&ndash; Fechas de emisión y vencimiento &ndash;&gt;
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <strong>Emisión:</strong>
+                            <span th:text="${#temporals.format(licencia.fechaEmision, 'dd/MM/yyyy')}"></span>
+                        </div>
+                        <div class="col-6 text-end">
+                            <strong>Vencimiento:</strong>
+                            <span th:text="${#temporals.format(licencia.fechaVencimiento, 'dd/MM/yyyy')}"></span>
+                        </div>
+                    </div>
+                    <hr/>
+
+                    &lt;!&ndash; Observaciones &ndash;&gt;
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <strong>Observaciones:</strong>
+                            <span th:text="${licencia.observaciones != null ? licencia.observaciones : '-'}"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted text-center">
+                    <small>Usuario Admin: <span th:text="${licencia.usuarioAdmin}"></span></small>
+                </div>
+            </div>
+
+            &lt;!&ndash; Botón para volver al listado de licencias &ndash;&gt;
+            <div class="text-center">
+                <a th:href="@{/licencias/lista}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Volver al listado
+                </a>
+            </div>
+        </div>
+    </div>&ndash;&gt;
+    <div class="row justify-content-center mt-4">
+        <div class="col-lg-8">
+
+            &lt;!&ndash; ====== FRENTE ====== &ndash;&gt;
+            <div class="card shadow-sm mb-4" style="aspect-ratio: 86/54; max-width: 100%;">
+
+                <div class="card-header py-1 text-center bg-primary text-white">
+                    <strong>LICENCIA NACIONAL DE CONDUCIR</strong><br>
+                    <small>Municipalidad de Santa Fe</small>
+                </div>
+
+                <div class="card-body p-2" style="font-size:.85rem">
+
+                    &lt;!&ndash; Foto del titular &ndash;&gt;
+                    <div class="float-start me-2">
+                        <img src="https://randomuser.me/api/portraits/men/75.jpg"
+                             alt="Foto"
+                             class="border border-2"
+                             style="width:90px;height:110px;object-fit:cover">
+                    </div>
+
+                    &lt;!&ndash; Datos &ndash;&gt;
+                    <div>
+                        <div><strong>N° Licencia:</strong> <span th:text="${licencia.id}"></span></div>
+                        <div><strong>DNI:</strong> <span th:text="${licencia.titular.numeroDocumento}"></span></div>
+                        <div><strong>Clase:</strong> <span th:text="${licencia.clase}"></span></div>
+                        <div><strong>Apellido&nbsp;/&nbsp;Nombre:</strong><br>
+                            <span th:text="${licencia.titular.apellido + ', ' + licencia.titular.nombre}"></span>
+                        </div>
+                        <div><strong>F. Nac.:</strong>
+                            <span th:text="${#temporals.format(licencia.titular.fechaNacimiento, 'dd/MM/yyyy')}"></span>
+                        </div>
+                        <div><strong>Dirección:</strong>
+                            <span th:text="${licencia.titular.direccion}"></span>
+                        </div>
+
+                        <div><strong>Grupo RH:</strong>
+                            <span th:text="${licencia.titular.grupoSanguineo}"></span>
+                            <span th:text="${licencia.titular.factorRh == T(com.utn.santafe.gestion_licencias.model.titular.FactorRh).POS ? '+' : '-'}"></span>
+                        </div>
+
+                        <div><strong>Donante:</strong>
+                            <span th:text="${licencia.titular.donanteOrganos ? 'Sí' : 'No'}"></span>
+                        </div>
+                    </div>
+
+                </div>&lt;!&ndash; card-body &ndash;&gt;
+
+                <div class="card-footer py-1 text-center" style="font-size:.75rem">
+                    <span>Emisión:</span>
+                    <span th:text="${#temporals.format(licencia.fechaEmision, 'dd/MM/yyyy')}"></span>
+                    &nbsp;|&nbsp;
+                    <span>Vence:</span>
+                    <span th:text="${#temporals.format(licencia.fechaVencimiento, 'dd/MM/yyyy')}"></span>
+                </div>
+            </div>
+
+            &lt;!&ndash; ====== DORSO ====== &ndash;&gt;
+            <div class="card shadow-sm" style="aspect-ratio: 86/54; max-width: 100%; font-size:.8rem">
+
+                <div class="card-body p-2">
+
+                    <div class="row g-0">
+                        <div class="col">
+                            <strong>Observaciones médicas / Restricciones</strong><br>
+                            <span th:text="${licencia.observaciones ?: '-'}"></span>
+
+                            <hr class="my-1">
+
+                            <div><strong>Usuario Admin:</strong>
+                                <span th:text="${licencia.usuarioAdmin}"></span>
+                            </div>
+                            <div><strong>Licencia Vigente:</strong>
+                                <span th:text="${licencia.vigente ? 'Sí' : 'No'}"></span>
+                            </div>
+
+                            <hr class="my-1">
+
+                            <small>Emitida conforme a Ley Nacional 24.449</small>
+                        </div>
+
+                        &lt;!&ndash; “Código de barras” simulado &ndash;&gt;
+                        <div class="col-auto ps-2 d-flex align-items-end">
+                            <svg width="80" height="50">
+                                <rect x="0" y="0" width="80" height="50" fill="#fff"/>
+                                &lt;!&ndash; líneas de barras simples → demo &ndash;&gt;
+                                <rect x="2" width="2" height="50" fill="#000"/>
+                                <rect x="6" width="4" height="50" fill="#000"/>
+                                <rect x="12" width="2" height="50" fill="#000"/>
+                                <rect x="16" width="6" height="50" fill="#000"/>
+                                <rect x="24" width="3" height="50" fill="#000"/>
+                                <rect x="30" width="5" height="50" fill="#000"/>
+                                <rect x="37" width="2" height="50" fill="#000"/>
+                                <rect x="41" width="6" height="50" fill="#000"/>
+                                <rect x="49" width="3" height="50" fill="#000"/>
+                                <rect x="54" width="2" height="50" fill="#000"/>
+                                <rect x="58" width="5" height="50" fill="#000"/>
+                                <rect x="65" width="3" height="50" fill="#000"/>
+                                <rect x="70" width="2" height="50" fill="#000"/>
+                                <rect x="74" width="4" height="50" fill="#000"/>
+                            </svg>
+                        </div>
+                    </div>&lt;!&ndash; row &ndash;&gt;
+
+                </div>&lt;!&ndash; card-body &ndash;&gt;
+            </div>&lt;!&ndash; card dorso &ndash;&gt;
+
+            &lt;!&ndash; botón volver &ndash;&gt;
+            <div class="text-center mt-3">
+                <a th:href="@{/licencias/lista}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Volver al listado
+                </a>
+            </div>
+
+        </div>&lt;!&ndash; col &ndash;&gt;
+    </div>&lt;!&ndash; row &ndash;&gt;
+
+</div>
+</body>
+</html>-->
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Imprimir Licencia</title>
+
+    <!-- ====== Estilos específicos de la tarjeta ====== -->
+    <style>
+        /* tarjeta a escala real (86 × 54 mm)      */
+        .lic-card  { width: 340px; height: 214px;
+                     font-size: .70rem;             /* texto compacto  */
+                     overflow: hidden; border-radius: 8px;
+                     transform: scale(1.15);        /* factor zoom     */
+                     transform-origin: top left;    /* (quítalo si no quieres zoom) */
+
+                   }
+        .lic-card header {
+            background:#007bff; color:#fff; line-height:1.1;
+            padding:2px 6px; text-align:center; font-size:.78rem;
+        }
+        .lic-flag { width:28px; height:18px; }
+        .lic-esc  { position:absolute; top:4px; right:4px; width:38px; }
+        img.lic-photo { width:90px; height:110px; object-fit:cover;
+                        border:2px solid #666; }
+        .lic-small { font-size:.68rem; }
+
+        /* Dorso: código barras simplificado */
+        .barcode { width:190px; height:36px; background:
+                   repeating-linear-gradient(90deg,#000 0 2px,#fff 2px 4px);}
+        /* “Impresión”: mantén escala 1 : 1 */
+        @media print { body{zoom:1 !important;} .lic-card{transform:none;} }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="d-flex flex-wrap justify-content-center"  style="gap: 100px;">
+
+        <!-- ==================== FRENTE ==================== -->
+        <div class="card lic-card position-relative shadow">
+            <header>
+                <img class="lic-flag me-1" src="https://flagcdn.com/w20/ar.png" alt="">
+                <strong>LICENCIA NACIONAL DE CONDUCIR</strong><br>
+                <span class="lic-small">Municipalidad de Santa Fe</span>
+            </header>
+
+            <div class="d-flex p-1 pt-2">
+                <!-- Foto medio rebuscado pero si el nombre del titular termina en A es una foto de mujer, si termina en otra cosa es de hombre  -->
+                <img th:src="${#strings.endsWith(licencia.titular.nombre, 'a')}
+                 ? 'https://randomuser.me/api/portraits/women/2.jpg'
+                 : 'https://randomuser.me/api/portraits/men/1.jpg'"
+                     alt="Foto titular"
+                     class="lic-photo me-2">
+
+
+                <!-- Datos -->
+                <div>
+                    <div><strong>Licencia Nº&nbsp;</strong><span th:text="${licencia.id}"> </span></div>
+                    <div><strong>Apellido&nbsp;&nbsp;</strong><span th:text="${licencia.titular.apellido}"> </span></div>
+                    <div><strong>Nombre&nbsp;&nbsp;</strong><span th:text="${licencia.titular.nombre}"> </span></div>
+                    <div><strong>Fecha nac.</strong>
+                        <span th:text="${#temporals.format(licencia.titular.fechaNacimiento,'dd/MM/yyyy')}"> </span>
+                    </div>
+                    <div><strong>Domicilio&nbsp;</strong>
+                        <span th:text="${licencia.titular.direccion}"> </span>
+                    </div>
+                    <div><strong>Clase&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
+                        <span th:text="${licencia.clase}"> </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="position-absolute"
+                 style="bottom:42px; right:8px; color:#c00; font-weight:600; font-size:.78rem">
+                VTO.&nbsp;<span th:text="${#temporals.format(licencia.fechaVencimiento,'dd/MM/yyyy')}"> </span>
+            </div>
+
+            <footer class="position-absolute bottom-0 start-0 w-100 text-white"
+                    style="background:#0062cc; padding:2px 0; text-align:center; font-size:.72rem;">
+                SEGURIDAD&nbsp;VIAL
+            </footer>
+        </div>
+
+        <!-- ==================== DORSO ==================== -->
+        <div class="card lic-card shadow">
+
+            <div class="p-1" style="height:100%">
+                <!-- 1ª fila: pictogramas de clases -->
+                <div class="d-flex align-items-center mb-1" style="font-size:.65rem">
+                    <span>A&nbsp;Motocicleta&nbsp;/&nbsp;150 cc</span>
+                    <span class="ms-3">B&nbsp;Auto&nbsp;≤ 3 500 kg</span>
+                </div>
+
+                <!-- Donante, grupo, CUIL -->
+                <div class="mb-1" style="font-size:.7rem">
+                    Donante: <span th:text="${licencia.titular.donanteOrganos ? 'SI' : 'NO'}"></span>
+                    &nbsp;&nbsp;|&nbsp; Grupo&nbsp;RH:
+                    <span th:text="${licencia.titular.grupoSanguineo}"></span>
+                    <span th:text="${licencia.titular.factorRh == T(com.utn.santafe.gestion_licencias.model.titular.FactorRh).POS ? '+' : '-'}"></span>
+                </div>
+
+                <!-- Observaciones -->
+                <div class="mb-2"><strong>Observaciones:</strong>
+                    <span th:text="${licencia.observaciones ?: '-'}"></span>
+                </div>
+
+                <!-- Código de barras simulado + firma responsable -->
+                <div class="d-flex justify-content-between align-items-end" style="position:absolute; bottom:3px; left:3px; right:3px">
+                    <div class="barcode"></div>
+                    <div style="font-size:.55rem; text-align:right">
+                        <span th:text="${licencia.usuarioAdmin}"></span><br>
+                        Responsable
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="text-center mt-5">
+        <a th:href="@{/licencias/lista}" class="btn btn-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Volver al listado
+        </a>
+    </div>
+</div>
+</body>
+</html>

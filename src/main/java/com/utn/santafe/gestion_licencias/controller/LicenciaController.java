@@ -71,14 +71,31 @@ public class LicenciaController {
             return "licencias/form";
         }
 
-        Licencia nueva = licenciaService.emitirLicencia(
-                form.getTitularId(),
-                form.getClase(),
-                form.getObservaciones(),
-                "admin"                         // Remplazarlo por el usuario real cuando implemente spring security
-        );
+        try {
+            Licencia nueva = licenciaService.emitirLicencia(
+                    form.getTitularId(),
+                    form.getClase(),
+                    form.getObservaciones(),
+                    "admin"                         // Remplazarlo por el usuario real cuando implemente spring security
+            );
 
-        ra.addFlashAttribute("success", "Licencia emitida ID " + nueva.getId());
+            ra.addFlashAttribute("success", "Licencia emitida ID " + nueva.getId());
+        }catch(IllegalArgumentException e){
+            ra.addFlashAttribute("error", e.getMessage());
+        }
         return "redirect:/titulares/lista";
+    }
+
+    @GetMapping("/lista")
+    public String verListadoLicencias(Model model) {
+        model.addAttribute("licencias", licenciaService.listarLicencias());
+        return "licencias/lista";
+    }
+
+    @GetMapping("/{id}/imprimirLicencia")
+    public String imprimirLicencia(@PathVariable Long id, Model model) {
+        Licencia licencia = licenciaService.buscarPorId(id);
+        model.addAttribute("licencia", licencia);
+        return "licencias/imprimirLicencia";
     }
 }

@@ -2,6 +2,7 @@ package com.utn.santafe.gestion_licencias.controller;
 
 import com.utn.santafe.gestion_licencias.model.titular.Titular;
 import com.utn.santafe.gestion_licencias.service.TitularService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import com.utn.santafe.gestion_licencias.model.titular.ClaseLicencia;
 import com.utn.santafe.gestion_licencias.model.titular.FactorRh;
 import com.utn.santafe.gestion_licencias.model.titular.GrupoSanguineo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Slf4j
 @Controller
@@ -43,7 +45,8 @@ public class TitularController {
     }
 
     @GetMapping("/lista")
-    public String listarTitulares(Model model) {
+    public String listarTitulares(Model model
+    ) {
         model.addAttribute("titulares", titularService.listarTitulares());
         return "titulares/lista";
     }
@@ -77,5 +80,11 @@ public class TitularController {
         m.addAttribute("clasesLicencia", ClaseLicencia.values());
         m.addAttribute("grupos",         GrupoSanguineo.values());
         m.addAttribute("factores",       FactorRh.values());
+    }
+
+    @GetMapping("/prueba-flash")
+    public String pruebaFlash(RedirectAttributes ra) {
+        ra.addFlashAttribute("success", "Flash OK desde /prueba-flash");
+        return "redirect:/titulares/lista";
     }
 }

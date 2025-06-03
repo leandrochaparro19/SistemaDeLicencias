@@ -5,9 +5,10 @@
     <title>Listado de Titulares</title>
 </head>
 <body>
+
 <div layout:fragment="content">
+
     <div class="row justify-content-center">
-        <!--  ✅  ocupamos todo el ancho         ↓ -->
         <div class="col-12">
             <div class="card shadow rounded-3">
                 <div class="card-body">
@@ -87,13 +88,48 @@
             </div>
         </div>
     </div>
-</div>
-<div th:if="${success}" class="container mt-3">
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="bi bi-check-circle-fill me-1"></i>
-        <span th:text="${success}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <!-- Éxito -->
+    <div th:if="${success != null}"
+         class="position-fixed bottom-0 start-0 end-0"
+         style="z-index:1080;">
+        <div class="container">
+            <div id="success-alert"
+                 class="alert alert-success alert-dismissible fade show mb-0"
+                 role="alert">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
     </div>
-</div>
+
+    <!-- Error -->
+    <div th:if="${error != null}"
+         class="position-fixed bottom-0 start-0 end-0"
+         style="z-index:1080;">
+        <div class="container">
+            <div id="error-alert"
+                 class="alert alert-danger alert-dismissible fade show mb-0"
+                 role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!--<script th:if="${success != null}" th:inline="javascript">
+        /*<![CDATA[*/
+        // Espera 3 segundos (3000 ms) y cierra la alerta con la API de Bootstrap 5
+        setTimeout(function() {
+          var alertNode = document.getElementById('success-alert');
+          if (alertNode) {
+            // "getOrCreateInstance" o directamente new bootstrap.Alert(alertNode)
+            var bsAlert = bootstrap.Alert.getOrCreateInstance(alertNode);
+            bsAlert.close();
+          }
+        }, 3000);
+        /*]]>*/
+    </script>-->
 </body>
 </html>

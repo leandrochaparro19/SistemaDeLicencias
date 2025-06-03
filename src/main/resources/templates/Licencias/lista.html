@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Listado de Licencias</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Flash messages de éxito/error, fijos abajo -->
+    <div th:if="${success}" class="position-fixed bottom-0 start-0 end-0" style="z-index:1080;">
+        <div class="container">
+            <div class="alert alert-success alert-dismissible fade show mb-0" role="alert">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <div th:if="${error}" class="position-fixed bottom-0 start-0 end-0" style="z-index:1080;">
+        <div class="container">
+            <div class="alert alert-danger alert-dismissible fade show mb-0" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-12 col-lg-10">
+            <div class="card shadow rounded-3">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Listado de Licencias</h2>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped table-hover align-middle">
+                            <thead class="table-light text-nowrap">
+                            <tr>
+                                <th>ID</th>
+                                <th>Titular</th>
+                                <th>Clase</th>
+                                <th>Emisión</th>
+                                <th>Vencimiento</th>
+                                <th>Usuario Admin</th>
+                                <th>Vigente</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="licencia : ${licencias}">
+                                <td th:text="${licencia.id}"></td>
+                                <td th:text="${licencia.titular.apellido + ', ' + licencia.titular.nombre}"></td>
+                                <td th:text="${licencia.clase}"></td>
+                                <td th:text="${#temporals.format(licencia.fechaEmision, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${#temporals.format(licencia.fechaVencimiento, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${licencia.usuarioAdmin}"></td>
+                                <td>
+                                    <span th:if="${licencia.vigente}" class="badge bg-success">Sí</span>
+                                    <span th:if="${!licencia.vigente}" class="badge bg-secondary">No</span>
+                                </td>
+                                <td class="text-nowrap">
+                                    <!-- Ejemplo: Ver/Imprimir -->
+                                    <a th:href="@{/licencias/{id}/imprimirLicencia(id=${licencia.id})}"
+                                       class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Imprimir Licencia">
+                                        <i class="bi bi-printer"></i>
+                                    </a>
+                                    <a th:href="@{/licencias/{id}/renovar(id=${licencia.id})}"
+                                       class="btn btn-outline-success btn-sm"
+                                       data-bs-toggle="tooltip" title="Renovar Licencia">
+                                        <i class="bi bi-arrow-clockwise"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(licencias)}">
+                                <td colspan="8" class="text-center text-muted">
+                                    No hay licencias registradas.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-3 d-flex justify-content-between">
+                        <a th:href="@{/}" class="btn btn-secondary">Volver al inicio</a>
+                        <a th:href="@{/titulares/lista}" class="btn btn-secondary">Ver Titulares</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

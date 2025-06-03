@@ -69,7 +69,7 @@ public class LicenciaService {
                 licenciaRepository.existsByTitularAndClaseAndFechaEmisionBefore(
                         t, ClaseLicencia.B, LocalDate.now().minusYears(1));
         if (!tieneB1)
-            throw new IllegalArgumentException("Debe poseer clase B con al menos un año de antigüedad");
+            throw new IllegalArgumentException("Debe poseer clase B con al menos un año de antiguedad");
     }
 
     public LocalDate calcularVencimiento(Titular t, ClaseLicencia c, LocalDate fechaEmision, boolean esPrimeraVez) {
@@ -91,5 +91,14 @@ public class LicenciaService {
         if (!venc.isAfter(fechaEmision)) venc = venc.plusYears(1);
 
         return venc;
+    }
+
+    public List<Licencia> listarLicencias() {
+        return licenciaRepository.findAll();
+    }
+
+    public Licencia buscarPorId(Long id) {
+        return licenciaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Licencia no encontrada con ID " + id));
     }
 }
