@@ -16,4 +16,6 @@ public interface LicenciaRepository extends JpaRepository<Licencia, Long> {
     long     countByTitularAndClaseAndVigente(Titular t, ClaseLicencia c, boolean vigente);
 
     List<Licencia> findByTitularAndVigente(Titular t, boolean b);
+
+    List<Licencia> findByTitularOrderByFechaEmisionDesc(Titular t);
 }

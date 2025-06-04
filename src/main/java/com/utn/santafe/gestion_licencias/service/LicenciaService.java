@@ -101,4 +101,49 @@ public class LicenciaService {
         return licenciaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Licencia no encontrada con ID " + id));
     }
+
+
+    public Licencia renovarLicencia(Long licenciaAnteriorId, ClaseLicencia nuevaClase, String obs, String usuarioAdmin) {
+
+        // 1. Obtener la licencia anterior y el titular asociado
+        Licencia anterior = licenciaRepository.findById(licenciaAnteriorId)
+                .orElseThrow(() -> new EntityNotFoundException("No existe licencia con ID " + licenciaAnteriorId));
+
+        Titular t = anterior.getTitular();
+
+        // 2. Desactivar todas las licencias vigentes de este titular
+        List<Licencia> vigentesPrevias = licenciaRepository.findByTitularAndVigente(t, true);
+        for (Licencia prev : vigentesPrevias) {
+            prev.setVigente(false);
+            licenciaRepository.save(prev);
+        }
+
+        // 3. Validar edad mínima y, si corresponde, requisito profesional para la nueva clase
+        validarEdadMinima(t, nuevaClase);
+        validarProfesional(t, nuevaClase);
+
+        // 4. Calcular fecha de emisión y vencimiento para la nueva licencia
+        LocalDate hoy = LocalDate.now();
+        boolean esPrimeraVez = licenciaRepository.countByTitularAndClaseAndVigente(t, nuevaClase, true) == 0;
+        LocalDate vence = calcularVencimiento(t, nuevaClase, hoy, esPrimeraVez);
+
+        // 5. Crear la nueva licencia y dejarla vigente
+        Licencia nueva = new Licencia();
+        nueva.setTitular(t);
+        nueva.setClase(nuevaClase);
+        nueva.setFechaEmision(hoy);
+        nueva.setFechaVencimiento(vence);
+        nueva.setObservaciones(obs);
+        nueva.setUsuarioAdmin(usuarioAdmin);
+        nueva.setVigente(true);
+
+        return licenciaRepository.save(nueva);
+    }
+
+    public List<Licencia> listarHistorialPorTitular(Long titularId) {
+        Titular t = titularRepository.findById(titularId)
+                .orElseThrow(() -> new EntityNotFoundException("Titular no encontrado con ID " + titularId));
+
+        return licenciaRepository.findByTitularOrderByFechaEmisionDesc(t);
+    }
 }

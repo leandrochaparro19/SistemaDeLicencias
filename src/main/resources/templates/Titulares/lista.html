@@ -69,6 +69,12 @@
                                        title="Emitir Licencia">
                                         <i class="bi bi-file-earmark-text"></i>
                                     </a>
+                                    <a th:href="@{/titulares/titular/{id}/historial(id=${titular.id})}"
+                                       class="btn btn-outline-info btn-sm"
+                                       data-bs-toggle="tooltip"
+                                       title="Ver historial de licencias">
+                                        <i class="bi bi-clock-history"></i>
+                                    </a>
                                 </td>
                             </tr>
 
@@ -117,19 +123,5 @@
             </div>
         </div>
     </div>
-
-    <!--<script th:if="${success != null}" th:inline="javascript">
-        /*<![CDATA[*/
-        // Espera 3 segundos (3000 ms) y cierra la alerta con la API de Bootstrap 5
-        setTimeout(function() {
-          var alertNode = document.getElementById('success-alert');
-          if (alertNode) {
-            // "getOrCreateInstance" o directamente new bootstrap.Alert(alertNode)
-            var bsAlert = bootstrap.Alert.getOrCreateInstance(alertNode);
-            bsAlert.close();
-          }
-        }, 3000);
-        /*]]>*/
-    </script>-->
 </body>
 </html>

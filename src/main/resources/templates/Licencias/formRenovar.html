@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Renovar Licencia</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow rounded-3">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Renovar Licencia</h2>
+
+                    <!-- Mostrar datos de la licencia actual -->
+                    <div class="mb-4">
+                        <div class="card border-secondary">
+                            <div class="card-header bg-light">
+                                Datos de la licencia actual (ID: <span th:text="${licenciaActual.id}">—</span>)
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-6">
+                                        <p class="mb-1"><strong>Titular:</strong>
+                                            <span th:text="${licenciaActual.titular.apellido} + ' ' + ${licenciaActual.titular.nombre}">Apellido Nombre</span>
+                                        </p>
+                                        <p class="mb-1"><strong>Clase actual:</strong>
+                                            <span th:text="${licenciaActual.clase}">CLASE</span>
+                                        </p>
+                                        <p class="mb-1"><strong>Fecha Emisión:</strong>
+                                            <span th:text="${licenciaActual.fechaEmision}">2025-01-01</span>
+                                        </p>
+                                        <p class="mb-0"><strong>Fecha Vencimiento:</strong>
+                                            <span th:text="${licenciaActual.fechaVencimiento}">2030-01-01</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p class="mb-1"><strong>Usuario Admin:</strong>
+                                            <span th:text="${licenciaActual.usuarioAdmin}">admin</span>
+                                        </p>
+                                        <p class="mb-1"><strong>Observaciones:</strong>
+                                            <span th:text="${licenciaActual.observaciones}">Sin observaciones</span>
+                                        </p>
+                                        <p class="mb-0"><strong>Vigente:</strong>
+                                            <span th:text="${licenciaActual.vigente} ? 'Sí' : 'No'">Sí</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form th:action="@{/licencias/{id}/renovar(id=${licenciaActual.id})}"
+                          th:object="${licenciaForm}"
+                          method="post"
+                          autocomplete="off">
+
+                        <!-- Campo oculto que envía el ID del titular -->
+                        <input type="hidden" th:field="*{titularId}" />
+
+                        <!-- Errores globales (negocio) -->
+                        <div th:if="${#fields.hasErrors('*')}"
+                             class="alert alert-danger mb-3">
+                            <ul class="mb-0">
+                                <li th:each="err : ${#fields.globalErrors()}"
+                                    th:text="${err}"></li>
+                            </ul>
+                        </div>
+
+                        <!-- Select de clases -->
+                        <div class="mb-3">
+                            <label class="form-label">Nueva Clase de Licencia</label>
+                            <select th:field="*{clase}" class="form-select">
+                                <option value="" disabled>-- Seleccione --</option>
+                                <option th:each="c : ${clases}"
+                                        th:value="${c}"
+                                        th:text="${c}"></option>
+                            </select>
+                            <div th:if="${#fields.hasErrors('clase')}"
+                                 class="text-danger small"
+                                 th:errors="*{clase}"></div>
+                        </div>
+
+                        <!-- Textarea observaciones -->
+                        <div class="mb-3">
+                            <label class="form-label">Observaciones</label>
+                            <textarea th:field="*{observaciones}"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Opcional, máximo 255 caracteres"></textarea>
+                            <div th:if="${#fields.hasErrors('observaciones')}"
+                                 class="text-danger small"
+                                 th:errors="*{observaciones}"></div>
+                        </div>
+
+                        <!-- Botones anchos -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Renovar Licencia
+                            </button>
+                            <a th:href="@{/titulares/lista}" class="btn btn-secondary btn-lg">
+                                Cancelar
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

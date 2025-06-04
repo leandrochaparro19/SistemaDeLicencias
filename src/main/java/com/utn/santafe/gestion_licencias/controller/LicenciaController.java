@@ -98,4 +98,53 @@ public class LicenciaController {
         model.addAttribute("licencia", licencia);
         return "licencias/imprimirLicencia";
     }
+
+    @GetMapping("/{id}/renovar")
+    public String mostrarFormularioRenovar(@PathVariable Long id, Model model) {
+        Licencia licenciaActual = licenciaService.buscarPorId(id);
+        if (licenciaActual == null) {
+            // si no existe, redirigir a list o mostrar error
+            return "redirect:/licencias?error=LicenciaNoEncontrada";
+        }
+
+        LicenciaForm form = new LicenciaForm();
+        form.setTitularId(licenciaActual.getTitular().getId());
+        form.setClase(licenciaActual.getClase());  // precargar clase actual
+        form.setObservaciones(licenciaActual.getObservaciones());
+
+        model.addAttribute("licenciaActual", licenciaActual);
+        model.addAttribute("licenciaForm", form);
+        model.addAttribute("clases", ClaseLicencia.values());
+        return "licencias/formRenovar";
+    }
+
+    @PostMapping("/{id}/renovar")
+    public String procesarRenovacion(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("licenciaForm") LicenciaForm form,
+            BindingResult br,
+            RedirectAttributes ra,
+            Model model) {
+
+        Licencia licenciaActual = licenciaService.buscarPorId(id);
+        if (licenciaActual == null) {
+            return "redirect:/licencias?error=LicenciaNoEncontrada";
+        }
+
+        if (br.hasErrors()) {
+            model.addAttribute("licenciaActual", licenciaActual);
+            model.addAttribute("clases", ClaseLicencia.values());
+            return "licencias/formRenovar";
+        }
+
+        Licencia renovada = licenciaService.renovarLicencia(
+                licenciaActual.getId(),
+                form.getClase(),
+                form.getObservaciones(),
+                String.valueOf(form.getTitularId())
+        );
+
+        ra.addFlashAttribute("success", "Licencia renovada (ID: " + renovada.getId() + ")");
+        return "redirect:/licencias/" + renovada.getId() + "/imprimirLicencia";
+    }
 }

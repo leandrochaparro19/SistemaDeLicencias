@@ -1,6 +1,8 @@
 package com.utn.santafe.gestion_licencias.controller;
 
+import com.utn.santafe.gestion_licencias.model.licencia.Licencia;
 import com.utn.santafe.gestion_licencias.model.titular.Titular;
+import com.utn.santafe.gestion_licencias.service.LicenciaService;
 import com.utn.santafe.gestion_licencias.service.TitularService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -16,6 +18,8 @@ import com.utn.santafe.gestion_licencias.model.titular.GrupoSanguineo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Slf4j
 @Controller
 @RequestMapping("/titulares")
@@ -23,6 +27,9 @@ public class TitularController {
 
     @Autowired
     private TitularService titularService;
+
+    @Autowired
+    private LicenciaService licenciaService;
 
     @GetMapping("/nuevo")
     public String mostrarFormularioAlta(Model model) {
@@ -82,9 +89,10 @@ public class TitularController {
         m.addAttribute("factores",       FactorRh.values());
     }
 
-    @GetMapping("/prueba-flash")
-    public String pruebaFlash(RedirectAttributes ra) {
-        ra.addFlashAttribute("success", "Flash OK desde /prueba-flash");
-        return "redirect:/titulares/lista";
+    @GetMapping("/titular/{titularId}/historial")
+    public String listarHistorialPorTitular(@PathVariable Long titularId, Model model) {
+        List<Licencia> historial = licenciaService.listarHistorialPorTitular(titularId);
+        model.addAttribute("historialLicencias", historial);
+        return "Titulares/historialTitular";
     }
 }

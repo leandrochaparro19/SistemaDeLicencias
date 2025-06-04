@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de Licencias</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
+</head>
+<body>
+<div class="container mt-4">
+    <h2>
+        Historial de licencias –
+        <span th:text="${
+     #lists.isEmpty(historialLicencias)
+       ? '— Sin licencias registradas —'
+       : (historialLicencias[0].titular.apellido + ' ' + historialLicencias[0].titular.nombre)
+  }">
+    Titular
+  </span>
+    </h2>
+    <hr/>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>ID Licencia</th>
+            <th>Clase</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Vencimiento</th>
+            <th>Vigente</th>
+            <th>Observaciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="licencia, iterStat : ${historialLicencias}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${licencia.id}">ID</td>
+            <td th:text="${licencia.clase}">Clase</td>
+            <td th:text="${licencia.fechaEmision}">2025-06-03</td>
+            <td th:text="${licencia.fechaVencimiento}">2026-06-03</td>
+            <td th:text="${licencia.vigente} ? 'VIGENTE' : 'INACTIVA'">VIGENTE</td>
+            <td th:text="${licencia.observaciones}">Observaciones</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/titulares}" class="btn btn-secondary">Volver a Titulares</a>
+</div>
+</body>
+</html>
