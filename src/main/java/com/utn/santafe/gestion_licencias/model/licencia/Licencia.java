@@ -1,11 +1,19 @@
 package com.utn.santafe.gestion_licencias.model.licencia;
 
+import java.time.LocalDate;
+
 import com.utn.santafe.gestion_licencias.model.titular.ClaseLicencia;
 import com.utn.santafe.gestion_licencias.model.titular.Titular;
-import jakarta.persistence.*;
-import lombok.Data;
 
-import java.time.LocalDate;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import lombok.Data;
 
 @Entity
 @Data
@@ -35,7 +43,8 @@ public class Licencia {
     @Column(nullable = false)
     private boolean vigente;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private tipoEmision TipoEmision;
+
 }
-
-
-

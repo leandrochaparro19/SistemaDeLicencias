@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.utn.santafe.gestion_licencias.model.licencia.Licencia;
+import com.utn.santafe.gestion_licencias.model.licencia.tipoEmision;
 import com.utn.santafe.gestion_licencias.model.titular.ClaseLicencia;
 import com.utn.santafe.gestion_licencias.model.titular.Titular;
 import com.utn.santafe.gestion_licencias.repository.LicenciaRepository;
@@ -45,6 +46,7 @@ public class LicenciaService {
         lic.setObservaciones(obs);
         lic.setUsuarioAdmin(usuario);
         lic.setVigente(true);
+        lic.setTipoEmision(tipoEmision.ORIGINAL);
 
         // licenciaRepository.findByTitularAndClaseAndVigente(t, clase,
         // true).ifPresent(l -> { l.setVigente(false); licenciaRepository.save(l); });
@@ -147,6 +149,7 @@ public class LicenciaService {
         nueva.setObservaciones(obs);
         nueva.setUsuarioAdmin(usuarioAdmin);
         nueva.setVigente(true);
+        nueva.setTipoEmision(tipoEmision.RENOVACION);
 
         return licenciaRepository.save(nueva);
     }
@@ -188,6 +191,7 @@ public class LicenciaService {
                 observaciones != null && !observaciones.trim().isEmpty() ? observaciones : "DUPLICADO DE LICENCIA");
         duplicadoLicencia.setUsuarioAdmin(usuarioAdmin);
         duplicadoLicencia.setVigente(true); // El duplicado es la nueva licencia activa
+        duplicadoLicencia.setTipoEmision(tipoEmision.DUPLICADO);
 
         return licenciaRepository.save(duplicadoLicencia);
     }
