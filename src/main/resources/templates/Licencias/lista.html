@@ -69,6 +69,10 @@
                                        data-bs-toggle="tooltip" title="Renovar Licencia">
                                         <i class="bi bi-arrow-clockwise"></i>
                                     </a>
+                                    <a th:href="@{/licencias/duplicar/{id}(id=${licencia.id})}" 
+                                    class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip" title="Emitir Duplicado">
+                                    <i class="bi bi-front"></i>
+                                    </a>
                                 </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(licencias)}">

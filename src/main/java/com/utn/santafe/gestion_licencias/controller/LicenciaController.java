@@ -110,34 +110,43 @@ public class LicenciaController {
     @PostMapping("/guardarDuplicado")
     public String guardarDuplicadoLicencia(@Valid @ModelAttribute("licenciaForm") LicenciaForm form, BindingResult br,
             Model model, RedirectAttributes ra) {
+        // Bloque 1: Manejo de ERRORES DE VALIDACIÓN del formulario
         if (br.hasErrors()) {
-            // Si hay errores de validación, necesitamos volver a cargar los datos
             model.addAttribute("clases", ClaseLicencia.values());
-            Titular t = titularRepository.findById(form.getTitularId())
-                    .orElseThrow(() -> new EntityNotFoundException("Titular no existe"));
-            model.addAttribute("titular", t);
-            return "licencias/formDuplicado";
+            try {
+                Titular t = titularRepository.findById(form.getTitularId())
+                        .orElseThrow(() -> new EntityNotFoundException("Titular no existe"));
+                model.addAttribute("titular", t);
+            } catch (EntityNotFoundException ex) {
+                model.addAttribute("errorMessage", "Error interno: Titular no encontrado al recargar el formulario.");
+            }
+            return "licencias/formDuplicadoLicencia";
         }
 
+        // Bloque 2: Intento de ejecución de la LÓGICA DE NEGOCIO (emitirDuplicado)
         try {
+            String usuarioAdmin = "admin_placeholder";
             Licencia duplicada = licenciaService.emitirDuplicado(
                     form.getTitularId(),
                     form.getClase(),
                     form.getObservaciones(),
-                    "admin" // Remplazarlo por el usuario real cuando implemente spring security
-            );
+                    usuarioAdmin);
+            ra.addFlashAttribute("successMessage",
+                    "Duplicado de licencia emitido exitosamente! ID: " + duplicada.getId());
+            return "redirect:/licencias/" + duplicada.getId() + "/imprimirLicencia";
 
-            ra.addFlashAttribute("success", "Duplicado de licencia emitido ID " + duplicada.getId());
         } catch (IllegalArgumentException e) {
-            ra.addFlashAttribute("error", e.getMessage());
-            // Si hay un error, volvemos al formulario y pasamos los atributos necesarios
+            model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("clases", ClaseLicencia.values());
-            Titular t = titularRepository.findById(form.getTitularId())
-                    .orElseThrow(() -> new EntityNotFoundException("Titular no existe"));
-            model.addAttribute("titular", t);
+            try {
+                Titular t = titularRepository.findById(form.getTitularId())
+                        .orElseThrow(() -> new EntityNotFoundException("Titular no existe"));
+                model.addAttribute("titular", t);
+            } catch (EntityNotFoundException ex) {
+                model.addAttribute("errorMessage", "Error interno: Titular no encontrado al recargar el formulario.");
+            }
             return "licencias/formDuplicadoLicencia";
         }
-        return "redirect:/titulares/lista"; // O redirigir a la vista de la nueva licencia duplicada
     }
 
     @GetMapping("/lista")
@@ -148,9 +157,15 @@ public class LicenciaController {
 
     @GetMapping("/{id}/imprimirLicencia")
     public String imprimirLicencia(@PathVariable Long id, Model model) {
-        Licencia licencia = licenciaService.buscarPorId(id);
-        model.addAttribute("licencia", licencia);
-        return "licencias/imprimirLicencia";
+        try {
+            Licencia licencia = licenciaService.buscarPorId(id);
+            model.addAttribute("licencia", licencia);
+            return "licencias/imprimirLicencia"; // El nombre de tu plantilla HTML
+        } catch (EntityNotFoundException e) {
+            // Manejar el caso de que la licencia no exista
+            model.addAttribute("errorMessage", "Licencia no encontrada para imprimir.");
+            return "errorPage"; // O redirigir a una lista, etc.
+        }
     }
 
     @GetMapping("/{id}/renovar")
