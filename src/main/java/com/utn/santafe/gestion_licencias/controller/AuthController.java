@@ -23,9 +23,4 @@ public class AuthController {
 
         return "auth/login";
     }
-
-    /*@GetMapping("/")
-    public String redirectToDashboard() {
-        return "redirect:/dashboard";
-    }*/
 }
