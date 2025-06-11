@@ -1,24 +1,32 @@
 package com.utn.santafe.gestion_licencias.controller;
 
-import com.utn.santafe.gestion_licencias.model.form.LicenciaForm;
 import com.utn.santafe.gestion_licencias.model.licencia.Licencia;
 import com.utn.santafe.gestion_licencias.model.titular.ClaseLicencia;
 import com.utn.santafe.gestion_licencias.model.titular.Titular;
-import com.utn.santafe.gestion_licencias.model.usuario.Usuario;
 import com.utn.santafe.gestion_licencias.repository.LicenciaRepository;
-import com.utn.santafe.gestion_licencias.repository.TitularRepository;
 import com.utn.santafe.gestion_licencias.service.LicenciaService;
+import com.utn.santafe.gestion_licencias.model.form.LicenciaForm;
+import com.utn.santafe.gestion_licencias.repository.TitularRepository;
+
 import com.utn.santafe.gestion_licencias.service.TitularService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+
 import org.springframework.web.bind.annotation.*;
+
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDate;
 
 @Slf4j
 @Controller
@@ -54,8 +62,7 @@ public class LicenciaController {
     public String guardarLicencia(@Valid @ModelAttribute("licenciaForm") LicenciaForm form,
                                   BindingResult br,
                                   Model model,
-                                  RedirectAttributes ra,
-                                  @AuthenticationPrincipal Usuario usuario) {
+                                  RedirectAttributes ra) {
         if (br.hasErrors()) {
             model.addAttribute("clases", ClaseLicencia.values());
             Titular t = titularRepository.findById(form.getTitularId())
@@ -69,11 +76,11 @@ public class LicenciaController {
                     form.getTitularId(),
                     form.getClase(),
                     form.getObservaciones(),
-                    usuario.getDni()   // <--- este es el que registra quién emitió
+                    "admin"                         // Remplazarlo por el usuario real cuando implemente spring security
             );
 
             ra.addFlashAttribute("success", "Licencia emitida ID " + nueva.getId());
-        } catch (IllegalArgumentException e) {
+        }catch(IllegalArgumentException e){
             ra.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/titulares/lista";
@@ -112,12 +119,12 @@ public class LicenciaController {
     }
 
     @PostMapping("/{id}/renovar")
-    public String procesarRenovacion(@PathVariable Long id,
-                                     @Valid @ModelAttribute("licenciaForm") LicenciaForm form,
-                                     BindingResult br,
-                                     RedirectAttributes ra,
-                                     Model model,
-                                     @AuthenticationPrincipal Usuario usuario) {
+    public String procesarRenovacion(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("licenciaForm") LicenciaForm form,
+            BindingResult br,
+            RedirectAttributes ra,
+            Model model) {
 
         Licencia licenciaActual = licenciaService.buscarPorId(id);
         if (licenciaActual == null) {
@@ -130,12 +137,11 @@ public class LicenciaController {
             return "licencias/formRenovar";
         }
 
-        String username = usuario.getDni();
         Licencia renovada = licenciaService.renovarLicencia(
                 licenciaActual.getId(),
                 form.getClase(),
                 form.getObservaciones(),
-                username
+                String.valueOf(form.getTitularId())
         );
 
         ra.addFlashAttribute("success", "Licencia renovada (ID: " + renovada.getId() + ")");

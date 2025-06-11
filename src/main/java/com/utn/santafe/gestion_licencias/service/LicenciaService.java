@@ -1,19 +1,22 @@
 package com.utn.santafe.gestion_licencias.service;
 
-import com.utn.santafe.gestion_licencias.model.licencia.Licencia;
-import com.utn.santafe.gestion_licencias.model.titular.ClaseLicencia;
-import com.utn.santafe.gestion_licencias.model.titular.Titular;
-import com.utn.santafe.gestion_licencias.repository.LicenciaRepository;
-import com.utn.santafe.gestion_licencias.repository.TitularRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.utn.santafe.gestion_licencias.model.licencia.Licencia;
+import com.utn.santafe.gestion_licencias.model.licencia.tipoEmision;
+import com.utn.santafe.gestion_licencias.model.titular.ClaseLicencia;
+import com.utn.santafe.gestion_licencias.model.titular.Titular;
+import com.utn.santafe.gestion_licencias.repository.LicenciaRepository;
+import com.utn.santafe.gestion_licencias.repository.TitularRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
@@ -21,7 +24,8 @@ public class LicenciaService {
 
     @Autowired
     private LicenciaRepository licenciaRepository;
-    @Autowired private TitularRepository titularRepository;
+    @Autowired
+    private TitularRepository titularRepository;
 
     public Licencia emitirLicencia(Long titularId, ClaseLicencia clase, String obs, String usuario) {
 
@@ -31,7 +35,7 @@ public class LicenciaService {
         validarProfesional(t, clase);
 
         boolean primeraVez = licenciaRepository.countByTitularAndClaseAndVigente(t, clase, true) == 0;
-        LocalDate hoy   = LocalDate.now();
+        LocalDate hoy = LocalDate.now();
         LocalDate vence = calcularVencimiento(t, clase, hoy, primeraVez);
 
         Licencia lic = new Licencia();
@@ -42,9 +46,11 @@ public class LicenciaService {
         lic.setObservaciones(obs);
         lic.setUsuarioAdmin(usuario);
         lic.setVigente(true);
+        lic.setTipoEmision(tipoEmision.ORIGINAL);
 
-
-        //licenciaRepository.findByTitularAndClaseAndVigente(t, clase, true).ifPresent(l -> { l.setVigente(false); licenciaRepository.save(l); });    //Solo setea la ultima licencia vigente a false
+        // licenciaRepository.findByTitularAndClaseAndVigente(t, clase,
+        // true).ifPresent(l -> { l.setVigente(false); licenciaRepository.save(l); });
+        // //Solo setea la ultima licencia vigente a false
 
         // setea todas las licencias vigentes anteriores a false
         List<Licencia> vigentesPrevias = licenciaRepository.findByTitularAndVigente(t, true);
@@ -64,10 +70,10 @@ public class LicenciaService {
     }
 
     private void validarProfesional(Titular t, ClaseLicencia clase) {
-        if (!Set.of(ClaseLicencia.C, ClaseLicencia.D, ClaseLicencia.E).contains(clase)) return;
-        boolean tieneB1 =
-                licenciaRepository.existsByTitularAndClaseAndFechaEmisionBefore(
-                        t, ClaseLicencia.B, LocalDate.now().minusYears(1));
+        if (!Set.of(ClaseLicencia.C, ClaseLicencia.D, ClaseLicencia.E).contains(clase))
+            return;
+        boolean tieneB1 = licenciaRepository.existsByTitularAndClaseAndFechaEmisionBefore(
+                t, ClaseLicencia.B, LocalDate.now().minusYears(1));
         if (!tieneB1)
             throw new IllegalArgumentException("Debe poseer clase B con al menos un año de antiguedad");
     }
@@ -77,18 +83,24 @@ public class LicenciaService {
         int edad = Period.between(t.getFechaNacimiento(), fechaEmision).getYears();
         int anios;
 
-        if (edad < 21) anios = esPrimeraVez ? 1 : 3;
-        else if (edad <= 46) anios = 5;
-        else if (edad <= 60) anios = 4;
-        else if (edad <= 70) anios = 3;
-        else anios = 1;
+        if (edad < 21)
+            anios = esPrimeraVez ? 1 : 3;
+        else if (edad <= 46)
+            anios = 5;
+        else if (edad <= 60)
+            anios = 4;
+        else if (edad <= 70)
+            anios = 3;
+        else
+            anios = 1;
 
         LocalDate venc = fechaEmision.plusYears(anios)
                 .withMonth(t.getFechaNacimiento().getMonthValue())
                 .withDayOfMonth(t.getFechaNacimiento().getDayOfMonth());
 
         /* si el día/mes ya pasaron este año, pasa al siguiente */
-        if (!venc.isAfter(fechaEmision)) venc = venc.plusYears(1);
+        if (!venc.isAfter(fechaEmision))
+            venc = venc.plusYears(1);
 
         return venc;
     }
@@ -102,8 +114,8 @@ public class LicenciaService {
                 .orElseThrow(() -> new EntityNotFoundException("Licencia no encontrada con ID " + id));
     }
 
-
-    public Licencia renovarLicencia(Long licenciaAnteriorId, ClaseLicencia nuevaClase, String obs, String usuarioAdmin) {
+    public Licencia renovarLicencia(Long licenciaAnteriorId, ClaseLicencia nuevaClase, String obs,
+            String usuarioAdmin) {
 
         // 1. Obtener la licencia anterior y el titular asociado
         Licencia anterior = licenciaRepository.findById(licenciaAnteriorId)
@@ -118,7 +130,8 @@ public class LicenciaService {
             licenciaRepository.save(prev);
         }
 
-        // 3. Validar edad mínima y, si corresponde, requisito profesional para la nueva clase
+        // 3. Validar edad mínima y, si corresponde, requisito profesional para la nueva
+        // clase
         validarEdadMinima(t, nuevaClase);
         validarProfesional(t, nuevaClase);
 
@@ -136,6 +149,7 @@ public class LicenciaService {
         nueva.setObservaciones(obs);
         nueva.setUsuarioAdmin(usuarioAdmin);
         nueva.setVigente(true);
+        nueva.setTipoEmision(tipoEmision.RENOVACION);
 
         return licenciaRepository.save(nueva);
     }
@@ -145,5 +159,40 @@ public class LicenciaService {
                 .orElseThrow(() -> new EntityNotFoundException("Titular no encontrado con ID " + titularId));
 
         return licenciaRepository.findByTitularOrderByFechaEmisionDesc(t);
+    }
+
+    public Licencia emitirDuplicado(Long titularId, ClaseLicencia clase, String observaciones, String usuarioAdmin) {
+        Titular titular = titularRepository.findById(titularId)
+                .orElseThrow(() -> new EntityNotFoundException("Titular no encontrado para emitir duplicado."));
+
+        // Validaciones: Las mismas validaciones de edad y profesional aplican para el
+        // duplicado
+        validarEdadMinima(titular, clase);
+        validarProfesional(titular, clase);
+
+        List<Licencia> vigentesPrevias = licenciaRepository.findByTitularAndVigente(titular, true);
+        for (Licencia prev : vigentesPrevias) {
+            prev.setVigente(false);
+            licenciaRepository.save(prev);
+        }
+
+        // Determinar si esta es la primera vez que se emite esta clase de licencia
+        // (para el cálculo de vencimiento)
+        boolean esPrimeraVez = licenciaRepository.countByTitularAndClaseAndVigente(titular, clase, true) == 0;
+        LocalDate hoy = LocalDate.now();
+        LocalDate vence = calcularVencimiento(titular, clase, hoy, esPrimeraVez);
+
+        Licencia duplicadoLicencia = new Licencia();
+        duplicadoLicencia.setTitular(titular);
+        duplicadoLicencia.setClase(clase);
+        duplicadoLicencia.setFechaEmision(hoy);
+        duplicadoLicencia.setFechaVencimiento(vence);
+        duplicadoLicencia.setObservaciones(
+                observaciones != null && !observaciones.trim().isEmpty() ? observaciones : "DUPLICADO DE LICENCIA");
+        duplicadoLicencia.setUsuarioAdmin(usuarioAdmin);
+        duplicadoLicencia.setVigente(true); // El duplicado es la nueva licencia activa
+        duplicadoLicencia.setTipoEmision(tipoEmision.DUPLICADO);
+
+        return licenciaRepository.save(duplicadoLicencia);
     }
 }
