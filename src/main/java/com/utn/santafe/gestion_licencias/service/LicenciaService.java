@@ -1,5 +1,6 @@
 package com.utn.santafe.gestion_licencias.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -38,6 +39,9 @@ public class LicenciaService {
         LocalDate hoy = LocalDate.now();
         LocalDate vence = calcularVencimiento(t, clase, hoy, primeraVez);
 
+        int aniosVigencia = Period.between(hoy, vence).getYears();
+        BigDecimal costo = calcularCostoLicencia(clase, aniosVigencia);
+
         Licencia lic = new Licencia();
         lic.setTitular(t);
         lic.setClase(clase);
@@ -47,6 +51,7 @@ public class LicenciaService {
         lic.setUsuarioAdmin(usuario);
         lic.setVigente(true);
         lic.setTipoEmision(tipoEmision.ORIGINAL);
+        lic.setCosto(costo);
 
         // licenciaRepository.findByTitularAndClaseAndVigente(t, clase,
         // true).ifPresent(l -> { l.setVigente(false); licenciaRepository.save(l); });
@@ -140,6 +145,9 @@ public class LicenciaService {
         boolean esPrimeraVez = licenciaRepository.countByTitularAndClaseAndVigente(t, nuevaClase, true) == 0;
         LocalDate vence = calcularVencimiento(t, nuevaClase, hoy, esPrimeraVez);
 
+        int aniosVigencia = Period.between(hoy, vence).getYears();
+        BigDecimal costo = calcularCostoLicencia(nuevaClase, aniosVigencia);
+
         // 5. Crear la nueva licencia y dejarla vigente
         Licencia nueva = new Licencia();
         nueva.setTitular(t);
@@ -150,6 +158,7 @@ public class LicenciaService {
         nueva.setUsuarioAdmin(usuarioAdmin);
         nueva.setVigente(true);
         nueva.setTipoEmision(tipoEmision.RENOVACION);
+        nueva.setCosto(costo);
 
         return licenciaRepository.save(nueva);
     }
@@ -182,6 +191,9 @@ public class LicenciaService {
         LocalDate hoy = LocalDate.now();
         LocalDate vence = calcularVencimiento(titular, clase, hoy, esPrimeraVez);
 
+        int aniosVigencia = Period.between(hoy, vence).getYears();
+        BigDecimal costo = calcularCostoLicencia(clase, aniosVigencia);
+
         Licencia duplicadoLicencia = new Licencia();
         duplicadoLicencia.setTitular(titular);
         duplicadoLicencia.setClase(clase);
@@ -192,7 +204,15 @@ public class LicenciaService {
         duplicadoLicencia.setUsuarioAdmin(usuarioAdmin);
         duplicadoLicencia.setVigente(true); // El duplicado es la nueva licencia activa
         duplicadoLicencia.setTipoEmision(tipoEmision.DUPLICADO);
+        duplicadoLicencia.setCosto(costo);
+
 
         return licenciaRepository.save(duplicadoLicencia);
+    }
+
+    private static final BigDecimal COSTO_ADMIN = BigDecimal.valueOf(8);
+
+    public BigDecimal calcularCostoLicencia(ClaseLicencia clase, int anios) {
+        return clase.tarifaParaVigencia(anios).add(COSTO_ADMIN);
     }
 }

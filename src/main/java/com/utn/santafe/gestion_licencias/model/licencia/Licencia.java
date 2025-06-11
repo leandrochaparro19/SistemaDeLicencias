@@ -1,5 +1,6 @@
 package com.utn.santafe.gestion_licencias.model.licencia;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import com.utn.santafe.gestion_licencias.model.titular.ClaseLicencia;
@@ -47,4 +48,6 @@ public class Licencia {
     @Column(nullable = false)
     private tipoEmision TipoEmision;
 
+    @Column(nullable = false, precision = 8, scale = 2)
+    private BigDecimal costo;
 }
