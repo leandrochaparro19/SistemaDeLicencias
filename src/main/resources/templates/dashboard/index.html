@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </h1>
+    </div>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+    </nav>
+
+    <!-- Bienvenida -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-primary" role="alert">
+                <h4 class="alert-heading">
+                    <i class="bi bi-person-check"></i>
+                    ¡Bienvenido, <span th:text="${usuario.nombreCompleto}"></span>!
+                </h4>
+                <p class="mb-0">
+                    Rol: <strong th:text="${usuario.rol.descripcion}"></strong> |
+                    Último acceso: <strong th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}"></strong>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2 card-stats">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Usuarios
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalUsuarios}">0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-people text-primary" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4" sec:authorize="hasRole('SUPERUSER')">
+            <div class="card border-left-success shadow h-100 py-2" style="border-left: 4px solid #28a745;">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Usuarios Activos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${usuariosActivos ?: 0}">0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-person-check text-success" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4" sec:authorize="hasRole('SUPERUSER')">
+            <div class="card border-left-warning shadow h-100 py-2" style="border-left: 4px solid #ffc107;">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Usuarios Inactivos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${usuariosInactivos ?: 0}">0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-person-x text-warning" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2" style="border-left: 4px solid #17a2b8;">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Licencias Pendientes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-clock-history text-info" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-lightning"></i> Acciones Rápidas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3" sec:authorize="hasRole('SUPERUSER')">
+                            <a href="/usuarios/nuevo" class="btn btn-primary btn-lg w-100">
+                                <i class="bi bi-person-plus"></i>
+                                <br>Crear Usuario
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3" sec:authorize="hasRole('SUPERUSER')">
+                            <a href="/usuarios" class="btn btn-info btn-lg w-100">
+                                <i class="bi bi-people"></i>
+                                <br>Ver Usuarios
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button class="btn btn-success btn-lg w-100" disabled>
+                                <i class="bi bi-plus-circle"></i>
+                                <br>Nueva Licencia
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button class="btn btn-warning btn-lg w-100" disabled>
+                                <i class="bi bi-search"></i>
+                                <br>Consultar Trámite
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-person"></i> Mi Perfil
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <i class="bi bi-person-circle text-primary" style="font-size: 4rem;"></i>
+                        <h5 class="mt-2" th:text="${usuario.nombreCompleto}"></h5>
+                        <p class="text-muted" th:text="${usuario.rol.descripcion}"></p>
+                        <hr>
+                        <p><strong>DNI:</strong> <span th:text="${usuario.dni}"></span></p>
+                        <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
+                        <p><strong>Edad:</strong> <span th:text="${usuario.edad}"></span> años</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

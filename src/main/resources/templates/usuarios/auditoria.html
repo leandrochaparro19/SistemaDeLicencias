@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Auditoría de Usuario</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            <i class="bi bi-clock-history"></i> Historial de Auditoría
+        </h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a th:href="@{/usuarios/{id}(id=${usuario.id})}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al Usuario
+            </a>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/usuarios">Usuarios</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/usuarios/{id}(id=${usuario.id})}" th:text="${usuario.nombreCompleto}"></a></li>
+            <li class="breadcrumb-item active">Auditoría</li>
+        </ol>
+    </nav>
+
+    <!-- Información del usuario -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-person"></i> Usuario: <span th:text="${usuario.nombreCompleto}"></span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong>DNI:</strong> <span th:text="${usuario.dni}"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Email:</strong> <span th:text="${usuario.email}"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Rol:</strong> <span th:text="${usuario.rol.descripcion}"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Estado:</strong>
+                            <span th:class="'badge ' + (${usuario.activo} ? 'bg-success' : 'bg-secondary')"
+                                  th:text="${usuario.activo} ? 'Activo' : 'Inactivo'"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de auditoría -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="bi bi-list-ul"></i> Historial de Modificaciones
+            </h6>
+        </div>
+        <div class="card-body">
+            <div th:if="${#lists.isEmpty(historialAuditoria)}" class="text-center py-4">
+                <i class="bi bi-clock-history text-muted" style="font-size: 3rem;"></i>
+                <p class="text-muted mt-2">No hay registros de auditoría para este usuario</p>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(historialAuditoria)}" class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-primary">
+                    <tr>
+                        <th>Fecha/Hora</th>
+                        <th>Operación</th>
+                        <th>Campo</th>
+                        <th>Valor Anterior</th>
+                        <th>Valor Nuevo</th>
+                        <th>Usuario que Modificó</th>
+                        <th>IP Origen</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="registro : ${historialAuditoria}">
+                        <td th:text="${#temporals.format(registro.fechaModificacion, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                        <td>
+                                    <span th:class="'badge ' + 
+                                          (${registro.tipoOperacion.name()} == 'CREACION' ? 'bg-success' : 
+                                           ${registro.tipoOperacion.name()} == 'MODIFICACION' ? 'bg-warning' : 
+                                           ${registro.tipoOperacion.name()} == 'ELIMINACION' ? 'bg-danger' : 
+                                           ${registro.tipoOperacion.name()} == 'ACTIVACION' ? 'bg-info' : 
+                                           ${registro.tipoOperacion.name()} == 'DESACTIVACION' ? 'bg-secondary' : 'bg-primary')"
+                                          th:text="${registro.tipoOperacion.descripcion}"></span>
+                        </td>
+                        <td>
+                            <code th:text="${registro.campoModificado}"></code>
+                        </td>
+                        <td>
+                                    <span th:if="${registro.valorAnterior != null and !registro.valorAnterior.isEmpty()}"
+                                          class="text-muted" th:text="${registro.valorAnterior}"></span>
+                            <span th:unless="${registro.valorAnterior != null and !registro.valorAnterior.isEmpty()}"
+                                  class="text-muted fst-italic">-</span>
+                        </td>
+                        <td>
+                                    <span th:if="${registro.valorNuevo != null and !registro.valorNuevo.isEmpty()}"
+                                          class="fw-bold" th:text="${registro.valorNuevo}"></span>
+                            <span th:unless="${registro.valorNuevo != null and !registro.valorNuevo.isEmpty()}"
+                                  class="text-muted fst-italic">-</span>
+                        </td>
+                        <td>
+                            <small>
+                                <strong th:text="${registro.usuarioQueModificaDni}"></strong>
+                                <br>
+                                <span class="text-muted">ID: </span><span th:text="${registro.usuarioQueModificaId}"></span>
+                            </small>
+                        </td>
+                        <td>
+                            <small class="text-muted" th:text="${registro.ipOrigen ?: 'N/A'}"></small>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

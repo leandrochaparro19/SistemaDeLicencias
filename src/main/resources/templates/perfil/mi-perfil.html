@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Mi Perfil</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            <i class="bi bi-person"></i> Mi Perfil
+        </h1>
+        <div class="btn-toolbar mb-2 mb-md-0" th:if="${usuario.rol.name() != 'ADMIN'}">
+            <a href="/perfil/editar" class="btn btn-primary">
+                <i class="bi bi-pencil"></i> Editar Perfil
+            </a>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">Mi Perfil</li>
+        </ol>
+    </nav>
+
+    <!-- Mensajes -->
+    <div th:if="${mensaje}" th:class="'alert alert-' + ${tipoMensaje} + ' alert-dismissible fade show'" role="alert">
+        <i class="bi" th:classappend="${tipoMensaje == 'success'} ? 'bi-check-circle' : 'bi-exclamation-triangle'"></i>
+        <span th:text="${mensaje}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-info-circle"></i> Información Personal
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Nombre Completo</label>
+                            <p class="h5" th:text="${usuario.nombreCompleto}"></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">DNI</label>
+                            <p class="h5" th:text="${usuario.dni}"></p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Fecha de Nacimiento</label>
+                            <p class="h6" th:text="${#temporals.format(usuario.fechaNacimiento, 'dd/MM/yyyy')}"></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Edad</label>
+                            <p class="h6" th:text="${usuario.edad} + ' años'"></p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Sexo</label>
+                            <p class="h6" th:text="${usuario.sexo != null ? usuario.sexo.descripcion : 'No especificado'}"></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Email</label>
+                            <p class="h6" th:text="${usuario.email}"></p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Teléfono</label>
+                            <p class="h6" th:text="${usuario.telefono ?: 'No especificado'}"></p>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Dirección</label>
+                        <p class="h6" th:text="${usuario.direccion}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-shield"></i> Información del Sistema
+                    </h6>
+                </div>
+                <div class="card-body text-center">
+                    <i class="bi bi-person-circle text-primary" style="font-size: 4rem;"></i>
+                    <h5 class="mt-3" th:text="${usuario.nombreCompleto}"></h5>
+
+                    <div class="mt-3">
+                            <span th:class="'badge fs-6 ' + (${usuario.rol.name()} == 'SUPERUSER' ? 'bg-danger' : 'bg-primary')"
+                                  th:text="${usuario.rol.descripcion}"></span>
+                    </div>
+
+                    <div class="mt-2">
+                        <span class="badge fs-6 bg-success">Usuario Activo</span>
+                    </div>
+
+                    <hr>
+
+                    <!-- Solo mostrar botones de edición si NO es ADMIN -->
+                    <div class="d-grid gap-2" th:if="${usuario.rol.name() != 'ADMIN'}">
+                        <a href="/perfil/editar" class="btn btn-warning">
+                            <i class="bi bi-pencil"></i> Editar Perfil
+                        </a>
+                        <a href="/perfil/cambiar-password" class="btn btn-info">
+                            <i class="bi bi-key"></i> Cambiar Contraseña
+                        </a>
+                    </div>
+
+                    <!-- Mensaje para administradores -->
+                    <div th:if="${usuario.rol.name() == 'ADMIN'}" class="alert alert-info mt-3">
+                        <small>
+                            <i class="bi bi-info-circle"></i>
+                            Los administradores no pueden editar su perfil por seguridad
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Editar Usuario</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            <i class="bi bi-pencil"></i> Editar Usuario
+        </h1>
+    </div>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/usuarios">Usuarios</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/usuarios/{id}(id=${usuario.id})}" th:text="${usuario.nombreCompleto}"></a></li>
+            <li class="breadcrumb-item active">Editar</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-pencil"></i> Formulario de Edición
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/usuarios/{id}/actualizar(id=${usuario.id})}" th:object="${usuario}" method="post" novalidate>
+
+                        <!-- Campos ocultos para datos no editables pero necesarios para validaciones -->
+                        <input type="hidden" th:field="*{id}">
+                        <input type="hidden" th:field="*{dni}">
+                        <input type="hidden" th:field="*{password}">
+                        <input type="hidden" th:field="*{fechaNacimiento}">
+                        <input type="hidden" th:field="*{sexo}">
+                        <input type="hidden" th:field="*{rol}">
+                        <input type="hidden" th:field="*{activo}">
+                        <input type="hidden" th:field="*{fechaCreacion}">
+                        <input type="hidden" th:field="*{fechaUltimaModificacion}">
+                        <input type="hidden" th:field="*{usuarioCreadorId}">
+                        <input type="hidden" th:field="*{usuarioModificadorId}">
+
+                        <div class="row">
+                            <!-- Nombre -->
+                            <div class="col-md-6 mb-3">
+                                <label for="nombre" class="form-label">
+                                    <i class="bi bi-person"></i> Nombre *
+                                </label>
+                                <input type="text" class="form-control"
+                                       th:field="*{nombre}"
+                                       th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''"
+                                       placeholder="Ingrese el nombre" required>
+                                <div th:if="${#fields.hasErrors('nombre')}" class="invalid-feedback">
+                                    <span th:errors="*{nombre}"></span>
+                                </div>
+                            </div>
+
+                            <!-- Apellido -->
+                            <div class="col-md-6 mb-3">
+                                <label for="apellido" class="form-label">
+                                    <i class="bi bi-person"></i> Apellido *
+                                </label>
+                                <input type="text" class="form-control"
+                                       th:field="*{apellido}"
+                                       th:classappend="${#fields.hasErrors('apellido')} ? 'is-invalid' : ''"
+                                       placeholder="Ingrese el apellido" required>
+                                <div th:if="${#fields.hasErrors('apellido')}" class="invalid-feedback">
+                                    <span th:errors="*{apellido}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Email -->
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="bi bi-envelope"></i> Email *
+                                </label>
+                                <input type="email" class="form-control"
+                                       th:field="*{email}"
+                                       th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                                       placeholder="usuario@ejemplo.com" required>
+                                <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback">
+                                    <span th:errors="*{email}"></span>
+                                </div>
+                            </div>
+
+                            <!-- Teléfono -->
+                            <div class="col-md-6 mb-3">
+                                <label for="telefono" class="form-label">
+                                    <i class="bi bi-telephone"></i> Teléfono
+                                </label>
+                                <input type="tel" class="form-control"
+                                       th:field="*{telefono}"
+                                       th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid' : ''"
+                                       placeholder="+54 9 11 1234-5678">
+                                <div class="form-text">Formato: +54 9 11 1234-5678 (opcional)</div>
+                                <div th:if="${#fields.hasErrors('telefono')}" class="invalid-feedback">
+                                    <span th:errors="*{telefono}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dirección -->
+                        <div class="mb-4">
+                            <label for="direccion" class="form-label">
+                                <i class="bi bi-geo-alt"></i> Dirección *
+                            </label>
+                            <textarea class="form-control"
+                                      th:field="*{direccion}"
+                                      th:classappend="${#fields.hasErrors('direccion')} ? 'is-invalid' : ''"
+                                      rows="2" placeholder="Ingrese la dirección completa" required></textarea>
+                            <div th:if="${#fields.hasErrors('direccion')}" class="invalid-feedback">
+                                <span th:errors="*{direccion}"></span>
+                            </div>
+                        </div>
+
+                        <!-- Campos no editables (solo lectura) -->
+                        <div class="alert alert-info">
+                            <h6><i class="bi bi-info-circle"></i> Información No Editable</h6>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <strong>DNI:</strong> <span th:text="${usuario.dni}"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <strong>Fecha Nacimiento:</strong> <span th:text="${#temporals.format(usuario.fechaNacimiento, 'dd/MM/yyyy')}"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <strong>Sexo:</strong> <span th:text="${usuario.sexo != null ? usuario.sexo.descripcion : 'No especificado'}"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <strong>Rol:</strong> <span th:text="${usuario.rol.descripcion}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información de auditoría -->
+                        <div th:if="${usuario.fechaUltimaModificacion != null}" class="alert alert-secondary">
+                            <h6><i class="bi bi-info-circle"></i> Información de Modificación</h6>
+                            <p class="mb-1">
+                                <strong>Última modificación:</strong>
+                                <span th:text="${#temporals.format(usuario.fechaUltimaModificacion, 'dd/MM/yyyy HH:mm')}"></span>
+                            </p>
+                            <p class="mb-0" th:if="${usuario.usuarioModificadorId}">
+                                <strong>Modificado por:</strong> Usuario ID <span th:text="${usuario.usuarioModificadorId}"></span>
+                            </p>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a th:href="@{/usuarios/{id}(id=${usuario.id})}" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Actualizar Usuario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        // Validación de email
+        const emailInput = document.getElementById('email');
+        if (emailInput) {
+            emailInput.addEventListener('input', function(e) {
+                const email = this.value;
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (email === '' || regex.test(email)) {
+                    this.classList.remove('is-invalid');
+                    if (email !== '') this.classList.add('is-valid');
+                } else {
+                    this.classList.remove('is-valid');
+                    this.classList.add('is-invalid');
+                }
+            });
+        }
+
+        // Validación de teléfono
+        const telefonoInput = document.getElementById('telefono');
+        if (telefonoInput) {
+            telefonoInput.addEventListener('input', function(e) {
+                const telefono = this.value;
+                const regex = /^\+?[0-9\s\-]{10,20}$/;
+
+                if (telefono === '' || regex.test(telefono)) {
+                    this.classList.remove('is-invalid');
+                    if (telefono !== '') this.classList.add('is-valid');
+                } else {
+                    this.classList.remove('is-valid');
+                    this.classList.add('is-invalid');
+                }
+            });
+        }
+    </script>
+</div>
+</body>
+</html>

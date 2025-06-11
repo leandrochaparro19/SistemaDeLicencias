@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Detalle de Usuario</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            <i class="bi bi-person"></i> Detalle de Usuario
+        </h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a href="/usuarios" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/usuarios">Usuarios</a></li>
+            <li class="breadcrumb-item active">Detalle</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-info-circle"></i> Información Personal
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Nombre Completo</label>
+                            <p class="h5" th:text="${usuario.nombreCompleto}"></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">DNI</label>
+                            <p class="h5" th:text="${usuario.dni}"></p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Fecha de Nacimiento</label>
+                            <p class="h6" th:text="${#temporals.format(usuario.fechaNacimiento, 'dd/MM/yyyy')}"></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Edad</label>
+                            <p class="h6" th:text="${usuario.edad} + ' años'"></p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Sexo</label>
+                            <p class="h6" th:text="${usuario.sexo != null ? usuario.sexo.descripcion : 'No especificado'}"></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Email</label>
+                            <p class="h6" th:text="${usuario.email}"></p>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Dirección</label>
+                        <p class="h6" th:text="${usuario.direccion}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-shield"></i> Información del Sistema
+                    </h6>
+                </div>
+                <div class="card-body text-center">
+                    <i class="bi bi-person-circle text-primary" style="font-size: 4rem;"></i>
+                    <h5 class="mt-3" th:text="${usuario.nombreCompleto}"></h5>
+
+                    <div class="mt-3">
+                            <span th:class="'badge fs-6 ' + (${usuario.rol.name()} == 'SUPERUSER' ? 'bg-danger' : 'bg-primary')"
+                                  th:text="${usuario.rol.descripcion}"></span>
+                    </div>
+
+                    <div class="mt-2">
+                            <span th:class="'badge fs-6 ' + (${usuario.activo} ? 'bg-success' : 'bg-secondary')"
+                                  th:text="${usuario.activo} ? 'Usuario Activo' : 'Usuario Inactivo'"></span>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/usuarios/{id}/editar(id=${usuario.id})}" class="btn btn-warning">
+                            <i class="bi bi-pencil"></i> Editar Usuario
+                        </a>
+                        <a th:href="@{/usuarios/{id}/cambiar-password(id=${usuario.id})}" class="btn btn-info">
+                            <i class="bi bi-key"></i> Cambiar Contraseña
+                        </a>
+                        <button type="button" class="btn"
+                                th:classappend="${usuario.activo} ? 'btn-outline-secondary' : 'btn-outline-success'"
+                                data-bs-toggle="modal"
+                                th:data-bs-target="'#toggleModal' + ${usuario.id}">
+                            <i th:class="${usuario.activo} ? 'bi bi-person-x' : 'bi bi-person-check'"></i>
+                            <span th:text="${usuario.activo} ? 'Desactivar Usuario' : 'Activar Usuario'"></span>
+                        </button>
+                    </div>
+
+                    <!-- Modal de confirmación de toggle estado -->
+                    <div class="modal fade" th:id="'toggleModal' + ${usuario.id}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">
+                                        <span th:if="${usuario.activo}">Desactivar Usuario</span>
+                                        <span th:unless="${usuario.activo}">Activar Usuario</span>
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p th:if="${usuario.activo}">
+                                        ¿Está seguro que desea <strong>desactivar</strong> al usuario
+                                        <strong th:text="${usuario.nombreCompleto}"></strong>?
+                                    </p>
+                                    <p th:unless="${usuario.activo}">
+                                        ¿Está seguro que desea <strong>activar</strong> al usuario
+                                        <strong th:text="${usuario.nombreCompleto}"></strong>?
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <form th:action="@{/usuarios/{id}/toggle-estado(id=${usuario.id})}" method="post" class="d-inline">
+                                        <button type="submit"
+                                                th:class="${usuario.activo} ? 'btn btn-warning' : 'btn btn-success'">
+                                            <span th:if="${usuario.activo}">Desactivar</span>
+                                            <span th:unless="${usuario.activo}">Activar</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

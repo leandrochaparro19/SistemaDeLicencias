@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Lista de Usuarios</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            <i class="bi bi-people"></i> Gestión de Usuarios
+        </h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a href="/usuarios/nuevo" class="btn btn-primary">
+                <i class="bi bi-person-plus"></i> Nuevo Usuario
+            </a>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">Usuarios</li>
+        </ol>
+    </nav>
+
+    <!-- Mensajes -->
+    <div th:if="${mensaje}" th:class="'alert alert-' + ${tipoMensaje} + ' alert-dismissible fade show'" role="alert">
+        <i class="bi" th:classappend="${tipoMensaje == 'success'} ? 'bi-check-circle' : 'bi-exclamation-triangle'"></i>
+        <span th:text="${mensaje}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h6 class="mb-0">Filtrar usuarios por estado:</h6>
+                </div>
+                <div class="col-md-6">
+                    <div class="btn-group" role="group">
+                        <a href="/usuarios"
+                           th:classappend="${estadoFiltro == null} ? 'btn-primary' : 'btn-outline-primary'"
+                           class="btn">
+                            <i class="bi bi-people"></i> Todos
+                        </a>
+                        <a href="/usuarios?estado=activos"
+                           th:classappend="${estadoFiltro == 'activos'} ? 'btn-success' : 'btn-outline-success'"
+                           class="btn">
+                            <i class="bi bi-person-check"></i> Activos
+                        </a>
+                        <a href="/usuarios?estado=inactivos"
+                           th:classappend="${estadoFiltro == 'inactivos'} ? 'btn-secondary' : 'btn-outline-secondary'"
+                           class="btn">
+                            <i class="bi bi-person-x"></i> Inactivos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de usuarios -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Usuarios Registrados</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-primary">
+                    <tr>
+                        <th>DNI</th>
+                        <th>Nombre Completo</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="usuario : ${usuarios}">
+                        <td th:text="${usuario.dni}"></td>
+                        <td th:text="${usuario.nombreCompleto}"></td>
+                        <td th:text="${usuario.email}"></td>
+                        <td>
+                                    <span th:class="'badge ' + (${usuario.rol.name()} == 'SUPERUSER' ? 'bg-danger' : 'bg-primary')"
+                                          th:text="${usuario.rol.descripcion}"></span>
+                        </td>
+                        <td>
+                                    <span th:class="'badge ' + (${usuario.activo} ? 'bg-success' : 'bg-secondary')"
+                                          th:text="${usuario.activo} ? 'Activo' : 'Inactivo'"></span>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a th:href="@{/usuarios/{id}(id=${usuario.id})}"
+                                   class="btn btn-sm btn-outline-info" title="Ver detalles">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:href="@{/usuarios/{id}/editar(id=${usuario.id})}"
+                                   class="btn btn-sm btn-outline-warning" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a th:href="@{/usuarios/{id}/cambiar-password(id=${usuario.id})}"
+                                   class="btn btn-sm btn-outline-secondary" title="Cambiar contraseña">
+                                    <i class="bi bi-key"></i>
+                                </a>
+
+                                <!-- Toggle Estado -->
+                                <button type="button" class="btn btn-sm"
+                                        th:classappend="${usuario.activo} ? 'btn-outline-secondary' : 'btn-outline-success'"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="'#toggleModal' + ${usuario.id}"
+                                        th:title="${usuario.activo} ? 'Desactivar' : 'Activar'">
+                                    <i th:class="${usuario.activo} ? 'bi bi-person-x' : 'bi bi-person-check'"></i>
+                                </button>
+
+                                <!-- Eliminar -->
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                        th:if="${usuario.rol.name() != 'SUPERUSER'}"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="'#eliminarModal' + ${usuario.id}"
+                                        title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+
+                            <!-- Modal de confirmación de toggle estado -->
+                            <div class="modal fade" th:id="'toggleModal' + ${usuario.id}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                <span th:if="${usuario.activo}">Desactivar Usuario</span>
+                                                <span th:unless="${usuario.activo}">Activar Usuario</span>
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p th:if="${usuario.activo}">
+                                                ¿Está seguro que desea <strong>desactivar</strong> al usuario
+                                                <strong th:text="${usuario.nombreCompleto}"></strong>?
+                                            </p>
+                                            <p th:unless="${usuario.activo}">
+                                                ¿Está seguro que desea <strong>activar</strong> al usuario
+                                                <strong th:text="${usuario.nombreCompleto}"></strong>?
+                                            </p>
+                                            <p class="text-warning" th:if="${usuario.activo}">
+                                                <small>El usuario no podrá iniciar sesión mientras esté inactivo.</small>
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <form th:action="@{/usuarios/{id}/toggle-estado(id=${usuario.id})}" method="post" class="d-inline">
+                                                <button type="submit"
+                                                        th:class="${usuario.activo} ? 'btn btn-warning' : 'btn btn-success'">
+                                                    <span th:if="${usuario.activo}">Desactivar</span>
+                                                    <span th:unless="${usuario.activo}">Activar</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal de confirmación de eliminación -->
+                            <div class="modal fade" th:id="'eliminarModal' + ${usuario.id}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirmar Eliminación</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>¿Está seguro que desea eliminar al usuario <strong th:text="${usuario.nombreCompleto}"></strong>?</p>
+                                            <p class="text-danger"><small>Esta acción no se puede deshacer.</small></p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <form th:action="@{/usuarios/{id}/eliminar(id=${usuario.id})}" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div th:if="${#lists.isEmpty(usuarios)}" class="text-center py-4">
+                    <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-2">No hay usuarios registrados</p>
+                    <a href="/usuarios/nuevo" class="btn btn-primary">
+                        <i class="bi bi-person-plus"></i> Crear Primer Usuario
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

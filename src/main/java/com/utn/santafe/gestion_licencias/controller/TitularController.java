@@ -1,22 +1,16 @@
 package com.utn.santafe.gestion_licencias.controller;
 
 import com.utn.santafe.gestion_licencias.model.licencia.Licencia;
-import com.utn.santafe.gestion_licencias.model.titular.Titular;
+import com.utn.santafe.gestion_licencias.model.titular.*;
 import com.utn.santafe.gestion_licencias.service.LicenciaService;
 import com.utn.santafe.gestion_licencias.service.TitularService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import com.utn.santafe.gestion_licencias.model.titular.TipoDocumento;
-import com.utn.santafe.gestion_licencias.model.titular.ClaseLicencia;
-import com.utn.santafe.gestion_licencias.model.titular.FactorRh;
-import com.utn.santafe.gestion_licencias.model.titular.GrupoSanguineo;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
