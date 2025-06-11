@@ -1,127 +1,277 @@
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{base}">
 <head>
     <title>Listado de Titulares</title>
+    <style>
+        .main-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .card-header-custom {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem 0.5rem 0 0;
+            margin: -1.5rem -1.5rem 2rem -1.5rem;
+        }
+        .action-bar {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .btn-new {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-new:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40,167,69,0.4);
+        }
+        .table {
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .table thead th {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: none;
+            font-weight: 600;
+            color: #495057;
+            padding: 1rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        .table tbody td {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+            border-color: #f1f3f4;
+            font-size: 0.875rem;
+        }
+        .table tbody tr:hover {
+            background-color: rgba(40,167,69,0.05);
+            transform: scale(1.01);
+            transition: all 0.2s ease;
+        }
+        .btn-action {
+            padding: 0.375rem 0.75rem;
+            margin: 0 0.125rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+        }
+        .btn-outline-primary:hover {
+            box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+        }
+        .btn-outline-danger:hover {
+            box-shadow: 0 4px 8px rgba(220,53,69,0.3);
+        }
+        .btn-outline-success:hover {
+            box-shadow: 0 4px 8px rgba(40,167,69,0.3);
+        }
+        .btn-outline-info:hover {
+            box-shadow: 0 4px 8px rgba(23,162,184,0.3);
+        }
+        .navigation-buttons {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        .btn-nav {
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-nav:hover {
+            transform: translateY(-2px);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6c757d;
+        }
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        .rh-badge {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+        }
+        .rh-positive { background-color: #dc3545; }
+        .rh-negative { background-color: #007bff; }
+    </style>
 </head>
 <body>
 
 <div layout:fragment="content">
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card main-card shadow-lg">
+                    <div class="card-body p-4">
+                        <div class="card-header-custom text-center">
+                            <i class="bi bi-people-fill display-4 mb-3"></i>
+                            <h2 class="mb-0">Gestión de Titulares</h2>
+                            <p class="mb-0 opacity-75">Administre todos los titulares del sistema</p>
+                        </div>
 
-    <div class="row justify-content-center">
-        <div class="col-12">
-            <div class="card shadow rounded-3">
-                <div class="card-body">
-                    <h2 class="text-center flex-grow-1 mb-0">Listado de Titulares</h2>
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <a th:href="@{/titulares/nuevo}" class="btn btn-primary">
-                            <i class="bi bi-person-plus"></i> Nuevo Titular
-                        </a>
+                        <div class="action-bar d-flex justify-content-between align-items-center">
+                            <a th:href="@{/titulares/nuevo}" class="btn btn-success btn-new">
+                                <i class="bi bi-person-plus me-2"></i>Nuevo Titular
+                            </a>
+                            <div class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                <span th:text="${#lists.size(titulares)} + ' titular(es) registrado(s)'">0 titulares registrados</span>
+                            </div>
+                        </div>
 
-                    </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                <tr>
+                                    <th><i class="bi bi-hash me-1"></i>ID</th>
+                                    <th><i class="bi bi-file-text me-1"></i>Tipo Doc</th>
+                                    <th><i class="bi bi-card-text me-1"></i>Nro Doc</th>
+                                    <th><i class="bi bi-person me-1"></i>Apellido</th>
+                                    <th><i class="bi bi-person me-1"></i>Nombre</th>
+                                    <th><i class="bi bi-calendar me-1"></i>F. Nac.</th>
+                                    <th><i class="bi bi-award me-1"></i>Clase</th>
+                                    <th><i class="bi bi-droplet me-1"></i>Grupo</th>
+                                    <th><i class="bi bi-plus-slash-minus me-1"></i>RH</th>
+                                    <th><i class="bi bi-heart me-1"></i>Don.</th>
+                                    <th><i class="bi bi-gear me-1"></i>Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="titular : ${titulares}">
+                                    <td>
+                                        <span class="badge bg-primary" th:text="${titular.id}"></span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary" th:text="${titular.tipoDocumento}"></span>
+                                    </td>
+                                    <td>
+                                        <strong th:text="${titular.numeroDocumento}"></strong>
+                                    </td>
+                                    <td th:text="${titular.apellido}"></td>
+                                    <td th:text="${titular.nombre}"></td>
+                                    <td th:text="${#temporals.format(titular.fechaNacimiento,'dd/MM/yyyy')}"></td>
+                                    <td>
+                                        <span class="badge bg-info text-dark" th:text="${titular.claseSolicitada}"></span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning text-dark" th:text="${titular.grupoSanguineo}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:class="${titular.factorRh == T(com.utn.santafe.gestion_licencias.model.titular.FactorRh).POS ? 'rh-badge rh-positive' : 'rh-badge rh-negative'}"
+                                              th:text="${titular.factorRh == T(com.utn.santafe.gestion_licencias.model.titular.FactorRh).POS ? '+' : '-'}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${titular.donanteOrganos}" class="badge bg-success">
+                                            <i class="bi bi-heart-fill me-1"></i>Sí
+                                        </span>
+                                        <span th:if="${!titular.donanteOrganos}" class="badge bg-secondary">
+                                            <i class="bi bi-heart me-1"></i>No
+                                        </span>
+                                    </td>
+                                    <td class="text-nowrap">
+                                        <a th:href="@{/titulares/editar/{id}(id=${titular.id})}"
+                                           class="btn btn-outline-primary btn-sm btn-action"
+                                           data-bs-toggle="tooltip"
+                                           title="Editar titular">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a th:href="@{/titulares/eliminar/{id}(id=${titular.id})}"
+                                           class="btn btn-outline-danger btn-sm btn-action"
+                                           data-bs-toggle="tooltip"
+                                           title="Eliminar titular">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                        <a th:href="@{/licencias/nueva/{id}(id=${titular.id})}"
+                                           class="btn btn-outline-success btn-sm btn-action"
+                                           data-bs-toggle="tooltip"
+                                           title="Emitir Licencia">
+                                            <i class="bi bi-file-earmark-plus"></i>
+                                        </a>
+                                        <a th:href="@{/titulares/titular/{id}/historial(id=${titular.id})}"
+                                           class="btn btn-outline-info btn-sm btn-action"
+                                           data-bs-toggle="tooltip"
+                                           title="Ver historial de licencias">
+                                            <i class="bi bi-clock-history"></i>
+                                        </a>
+                                    </td>
+                                </tr>
 
-                    <!--  table-responsive-xxl da scroll sólo en pantallas chicas -->
-                    <div class="table-responsive-xxl">
-                        <!-- table-sm reduce padding vertical -->
-                        <table class="table table-sm table-striped table-hover align-middle">
-                            <thead class="table-light text-nowrap">
-                            <tr>
-                                <th>ID</th>
-                                <th>Tipo Doc</th>
-                                <th>Nro Doc</th>
-                                <th>Apellido</th>
-                                <th>Nombre</th>
-                                <th>F. Nac.</th>
-                                <th>Clase</th>
-                                <th>Grupo</th>
-                                <th>RH</th>
-                                <th>Don.</th>
-                                <th>Acciones</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="titular : ${titulares}">
-                                <td th:text="${titular.id}"></td>
-                                <td th:text="${titular.tipoDocumento}"></td>
-                                <td th:text="${titular.numeroDocumento}"></td>
-                                <td th:text="${titular.apellido}"></td>
-                                <td th:text="${titular.nombre}"></td>
-                                <!-- fecha dd/MM/yyyy -->
-                                <td th:text="${#temporals.format(titular.fechaNacimiento,'dd/MM/yyyy')}"></td>
-                                <td th:text="${titular.claseSolicitada}"></td>
-                                <td th:text="${titular.grupoSanguineo}"></td>
-                                <td th:text="${titular.factorRh == T(com.utn.santafe.gestion_licencias.model.titular.FactorRh).POS ? '+' : '-'}"></td>
-                                <td th:text="${titular.donanteOrganos ? 'Sí' : 'No'}"></td>
+                                <tr th:if="${#lists.isEmpty(titulares)}">
+                                    <td colspan="11">
+                                        <div class="empty-state">
+                                            <i class="bi bi-person-x"></i>
+                                            <h5>No hay titulares registrados</h5>
+                                            <p class="mb-0">Comience agregando un nuevo titular al sistema</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
-                                <td class="text-nowrap">
-                                    <a th:href="@{/titulares/editar/{id}(id=${titular.id})}"
-                                       class="btn btn-outline-primary btn-sm"
-                                       title="Editar titular">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a th:href="@{/titulares/eliminar/{id}(id=${titular.id})}"
-                                       class="btn btn-outline-danger btn-sm"
-                                       title="Eliminar titular">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                    <a th:href="@{/licencias/nueva/{id}(id=${titular.id})}"
-                                       class="btn btn-outline-success btn-sm"
-                                       title="Emitir Licencia">
-                                        <i class="bi bi-file-earmark-text"></i>
-                                    </a>
-                                    <a th:href="@{/titulares/titular/{id}/historial(id=${titular.id})}"
-                                       class="btn btn-outline-info btn-sm"
-                                       data-bs-toggle="tooltip"
-                                       title="Ver historial de licencias">
-                                        <i class="bi bi-clock-history"></i>
-                                    </a>
-                                </td>
-                            </tr>
-
-                            <tr th:if="${#lists.isEmpty(titulares)}">
-                                <td colspan="11" class="text-center text-muted">
-                                    No hay titulares registrados.
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-3">
-                        <a th:href="@{/}" class="btn btn-secondary">Volver al inicio</a>
+                        <div class="navigation-buttons">
+                            <a th:href="@{/}" class="btn btn-secondary btn-nav">
+                                <i class="bi bi-house me-2"></i>Volver al inicio
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Éxito -->
+
+    <!-- Mensajes de éxito -->
     <div th:if="${success != null}"
          class="position-fixed bottom-0 start-0 end-0"
          style="z-index:1080;">
         <div class="container">
-            <div id="success-alert"
-                 class="alert alert-success alert-dismissible fade show mb-0"
-                 role="alert">
-                <i class="bi bi-check-circle-fill me-1"></i>
+            <div class="alert alert-success alert-dismissible fade show mb-0 shadow-lg"
+                 role="alert" style="border-radius: 0.5rem;">
+                <i class="bi bi-check-circle-fill me-2"></i>
                 <span th:text="${success}"></span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
     </div>
 
-    <!-- Error -->
+    <!-- Mensajes de error -->
     <div th:if="${error != null}"
          class="position-fixed bottom-0 start-0 end-0"
          style="z-index:1080;">
         <div class="container">
-            <div id="error-alert"
-                 class="alert alert-danger alert-dismissible fade show mb-0"
-                 role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+            <div class="alert alert-danger alert-dismissible fade show mb-0 shadow-lg"
+                 role="alert" style="border-radius: 0.5rem;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
                 <span th:text="${error}"></span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>

@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDate;
-
 @Slf4j
 @Controller
 @RequestMapping("/licencias")
@@ -62,7 +60,9 @@ public class LicenciaController {
     public String guardarLicencia(@Valid @ModelAttribute("licenciaForm") LicenciaForm form,
                                   BindingResult br,
                                   Model model,
-                                  RedirectAttributes ra) {
+                                  RedirectAttributes ra,
+                                  @AuthenticationPrincipal UserDetails currentUser) { // Inyectar usuario directamente
+
         if (br.hasErrors()) {
             model.addAttribute("clases", ClaseLicencia.values());
             Titular t = titularRepository.findById(form.getTitularId())
@@ -72,17 +72,24 @@ public class LicenciaController {
         }
 
         try {
+            // Verificar que haya usuario autenticado
+            if (currentUser == null) {
+                ra.addFlashAttribute("error", "Usuario no autenticado");
+                return "redirect:/login";
+            }
+
             Licencia nueva = licenciaService.emitirLicencia(
                     form.getTitularId(),
                     form.getClase(),
                     form.getObservaciones(),
-                    "admin"                         // Remplazarlo por el usuario real cuando implemente spring security
+                    currentUser.getUsername()  // El username es el DNI en tu configuración
             );
 
             ra.addFlashAttribute("success", "Licencia emitida ID " + nueva.getId());
-        }catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
+
         return "redirect:/titulares/lista";
     }
 
@@ -124,7 +131,8 @@ public class LicenciaController {
             @Valid @ModelAttribute("licenciaForm") LicenciaForm form,
             BindingResult br,
             RedirectAttributes ra,
-            Model model) {
+            Model model,
+            @AuthenticationPrincipal UserDetails currentUser) { // Inyectar usuario directamente
 
         Licencia licenciaActual = licenciaService.buscarPorId(id);
         if (licenciaActual == null) {
@@ -137,11 +145,17 @@ public class LicenciaController {
             return "licencias/formRenovar";
         }
 
+        // Verificar que haya usuario autenticado
+        if (currentUser == null) {
+            ra.addFlashAttribute("error", "Usuario no autenticado");
+            return "redirect:/login";
+        }
+
         Licencia renovada = licenciaService.renovarLicencia(
                 licenciaActual.getId(),
                 form.getClase(),
                 form.getObservaciones(),
-                String.valueOf(form.getTitularId())
+                currentUser.getUsername()  // El username es el DNI
         );
 
         ra.addFlashAttribute("success", "Licencia renovada (ID: " + renovada.getId() + ")");

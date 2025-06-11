@@ -112,6 +112,40 @@
                                 </div>
                             </div>
 
+                            <!-- Rol -->
+                            <div class="col-md-6 mb-3">
+                                <label for="rol" class="form-label">
+                                    <i class="bi bi-person-badge"></i> Rol *
+                                </label>
+                                <select class="form-select"
+                                        th:field="*{rol}"
+                                        th:classappend="${#fields.hasErrors('rol')} ? 'is-invalid' : ''" required>
+                                    <option value="">Seleccione...</option>
+                                    <option th:each="rolOption : ${T(com.utn.santafe.gestion_licencias.model.usuario.Rol).values()}"
+                                            th:value="${rolOption}" th:text="${rolOption.descripcion}"
+                                            th:if="${rolOption.name() != 'SUPERUSER'}"></option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('rol')}" class="invalid-feedback">
+                                    <span th:errors="*{rol}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Email -->
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="bi bi-envelope"></i> Email *
+                                </label>
+                                <input type="email" class="form-control"
+                                       th:field="*{email}"
+                                       th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                                       placeholder="usuario@ejemplo.com" required>
+                                <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback">
+                                    <span th:errors="*{email}"></span>
+                                </div>
+                            </div>
+
                             <!-- Teléfono -->
                             <div class="col-md-6 mb-3">
                                 <label for="telefono" class="form-label">
@@ -139,20 +173,6 @@
                                       rows="2" placeholder="Ingrese la dirección completa" required></textarea>
                             <div th:if="${#fields.hasErrors('direccion')}" class="invalid-feedback">
                                 <span th:errors="*{direccion}"></span>
-                            </div>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="mb-3">
-                            <label for="email" class="form-label">
-                                <i class="bi bi-envelope"></i> Email *
-                            </label>
-                            <input type="email" class="form-control"
-                                   th:field="*{email}"
-                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
-                                   placeholder="usuario@ejemplo.com" required>
-                            <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback">
-                                <span th:errors="*{email}"></span>
                             </div>
                         </div>
 

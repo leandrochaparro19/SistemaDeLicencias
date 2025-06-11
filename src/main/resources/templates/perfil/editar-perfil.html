@@ -32,6 +32,17 @@
                 </div>
                 <div class="card-body">
                     <form th:action="@{/perfil/actualizar}" th:object="${usuario}" method="post">
+                        <input type="hidden" th:field="*{id}">
+                        <input type="hidden" th:field="*{dni}">
+                        <input type="hidden" th:field="*{password}">
+                        <input type="hidden" th:field="*{fechaNacimiento}">
+                        <input type="hidden" th:field="*{sexo}">
+                        <input type="hidden" th:field="*{rol}">
+                        <input type="hidden" th:field="*{activo}">
+                        <input type="hidden" th:field="*{fechaCreacion}">
+                        <input type="hidden" th:field="*{fechaUltimaModificacion}">
+                        <input type="hidden" th:field="*{usuarioCreadorId}">
+                        <input type="hidden" th:field="*{usuarioModificadorId}">
                         <div class="row">
                             <!-- Nombre -->
                             <div class="col-md-6 mb-3">

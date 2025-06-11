@@ -4,126 +4,282 @@
       layout:decorate="~{base}">
 <head>
     <title th:text="${titular.id == null ? 'Alta de Titular' : 'Editar Titular'}">Formulario</title>
+    <style>
+        .form-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .form-header {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem 0.5rem 0 0;
+            margin: -1.5rem -1.5rem 2rem -1.5rem;
+        }
+        .form-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #dee2e6;
+        }
+        .section-title {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #28a745;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40,167,69,0.25);
+        }
+        .form-check-input:checked {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.2rem rgba(40,167,69,0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40,167,69,0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108,117,125,0.4);
+        }
+        .alert {
+            border: none;
+            border-radius: 0.5rem;
+            padding: 1rem 1.5rem;
+        }
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+        }
+        .input-group-text {
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            border: 2px solid #e9ecef;
+            border-right: none;
+        }
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
 <div layout:fragment="content">
-
-    <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-6">
-            <div class="card shadow rounded-3">
-                <div class="card-body">
-
-                    <h2 class="text-center mb-4"
-                        th:text="${titular.id == null ? 'Alta de Titular' : 'Editar Titular'}">Título</h2>
-
-                    <!--  🔑 id oculto: sólo tendrá valor al editar -->
-                    <form th:action="@{/titulares/guardar}"
-                          th:object="${titular}" method="post" autocomplete="off">
-                        <input type="hidden" th:field="*{id}"/>
-
-                        <!-- alertas -->
-                        <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger mb-3">
-                            Revise los campos marcados en rojo.
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card form-card shadow-lg">
+                    <div class="card-body p-4">
+                        <div class="form-header text-center">
+                            <i th:class="${titular.id == null ? 'bi bi-person-plus display-4 mb-3' : 'bi bi-person-gear display-4 mb-3'}"></i>
+                            <h2 class="mb-0" th:text="${titular.id == null ? 'Nuevo Titular' : 'Editar Titular'}">Título</h2>
+                            <p class="mb-0 opacity-75" th:text="${titular.id == null ? 'Complete los datos del nuevo titular' : 'Modifique los datos del titular'}">Subtítulo</p>
                         </div>
 
-                        <!-- TIPO DOCUMENTO -->
-                        <div class="mb-3">
-                            <label class="form-label">Tipo de Documento</label>
-                            <select th:field="*{tipoDocumento}" class="form-select">
-                                <option th:each="td : ${tiposDoc}"
-                                        th:value="${td}" th:text="${td}">
-                                </option>
-                            </select>
-                        </div>
+                        <form th:action="@{/titulares/guardar}"
+                              th:object="${titular}" method="post" autocomplete="off">
+                            <input type="hidden" th:field="*{id}"/>
 
-                        <!-- NRO DOC -->
-                        <div class="mb-3">
-                            <label class="form-label">Número de Documento</label>
-                            <input th:field="*{numeroDocumento}" class="form-control"
-                                   inputmode="numeric" pattern="\d{1,8}" maxlength="8">
-                        </div>
-
-                        <!-- APELLIDO / NOMBRE -->
-                        <div class="row">
-                            <div class="col mb-3">
-                                <label class="form-label">Apellido</label>
-                                <input th:field="*{apellido}" class="form-control">
+                            <!-- Alertas de error -->
+                            <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger mb-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <strong>Por favor revise los campos marcados:</strong>
+                                </div>
                             </div>
-                            <div class="col mb-3">
-                                <label class="form-label">Nombre</label>
-                                <input th:field="*{nombre}" class="form-control">
+
+                            <!-- Sección: Datos de Identificación -->
+                            <div class="form-section">
+                                <h5 class="section-title">
+                                    <i class="bi bi-card-text me-2"></i>
+                                    Datos de Identificación
+                                </h5>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-field">
+                                            <i class="bi bi-file-text me-1"></i>
+                                            Tipo de Documento
+                                        </label>
+                                        <select th:field="*{tipoDocumento}" class="form-select">
+                                            <option th:each="td : ${tiposDoc}"
+                                                    th:value="${td}" th:text="${td}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-field">
+                                            <i class="bi bi-123 me-1"></i>
+                                            Número de Documento
+                                        </label>
+                                        <input th:field="*{numeroDocumento}" class="form-control"
+                                               inputmode="numeric" pattern="\d{1,8}" maxlength="8"
+                                               placeholder="Ej: 12345678">
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- FECHA -->
-                        <div class="mb-3">
-                            <label class="form-label">Fecha de Nacimiento</label>
-                            <!-- LocalDate se serializa en ISO-8601 (yyyy-MM-dd) que entiende <input date> -->
-                            <input type="date" class="form-control"
-                                   th:field="*{fechaNacimiento}"
-                                   th:value="${titular.fechaNacimiento != null
-                                 ? #temporals.format(titular.fechaNacimiento, 'yyyy-MM-dd')
-                                 : ''}">
-                        </div>
+                            <!-- Sección: Datos Personales -->
+                            <div class="form-section">
+                                <h5 class="section-title">
+                                    <i class="bi bi-person me-2"></i>
+                                    Datos Personales
+                                </h5>
 
-                        <!-- DIRECCIÓN -->
-                        <div class="mb-3">
-                            <label class="form-label">Dirección</label>
-                            <input th:field="*{direccion}" class="form-control">
-                        </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-field">
+                                            <i class="bi bi-person-badge me-1"></i>
+                                            Apellido
+                                        </label>
+                                        <input th:field="*{apellido}" class="form-control"
+                                               placeholder="Ingrese el apellido">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-field">
+                                            <i class="bi bi-person-badge me-1"></i>
+                                            Nombre
+                                        </label>
+                                        <input th:field="*{nombre}" class="form-control"
+                                               placeholder="Ingrese el nombre">
+                                    </div>
+                                </div>
 
-                        <!-- CLASE / GRUPO -->
-                        <div class="row">
-                            <div class="col mb-3">
-                                <label class="form-label">Clase Solicitada</label>
-                                <select th:field="*{claseSolicitada}" class="form-select">
-                                    <option th:each="c : ${clasesLicencia}"
-                                            th:value="${c}" th:text="${c}"></option>
-                                </select>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-field">
+                                            <i class="bi bi-calendar-event me-1"></i>
+                                            Fecha de Nacimiento
+                                        </label>
+                                        <input type="date" class="form-control"
+                                               th:field="*{fechaNacimiento}"
+                                               th:value="${titular.fechaNacimiento != null
+                                             ? #temporals.format(titular.fechaNacimiento, 'yyyy-MM-dd')
+                                             : ''}">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-field">
+                                            <i class="bi bi-geo-alt me-1"></i>
+                                            Dirección
+                                        </label>
+                                        <input th:field="*{direccion}" class="form-control"
+                                               placeholder="Calle, número, ciudad">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col mb-3">
-                                <label class="form-label">Grupo Sanguíneo</label>
-                                <select th:field="*{grupoSanguineo}" class="form-select">
-                                    <option th:each="g : ${grupos}"
-                                            th:value="${g}" th:text="${g}"></option>
-                                </select>
+
+                            <!-- Sección: Datos de Licencia -->
+                            <div class="form-section">
+                                <h5 class="section-title">
+                                    <i class="bi bi-award me-2"></i>
+                                    Datos de Licencia
+                                </h5>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-field">
+                                            <i class="bi bi-car-front me-1"></i>
+                                            Clase Solicitada
+                                        </label>
+                                        <select th:field="*{claseSolicitada}" class="form-select">
+                                            <option value="" disabled>-- Seleccione una clase --</option>
+                                            <option th:each="c : ${clasesLicencia}"
+                                                    th:value="${c}" th:text="${c}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-field">
+                                            <i class="bi bi-droplet me-1"></i>
+                                            Grupo Sanguíneo
+                                        </label>
+                                        <select th:field="*{grupoSanguineo}" class="form-select">
+                                            <option value="" disabled>-- Seleccione grupo --</option>
+                                            <option th:each="g : ${grupos}"
+                                                    th:value="${g}" th:text="${g}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-field">
+                                            <i class="bi bi-plus-slash-minus me-1"></i>
+                                            Factor RH
+                                        </label>
+                                        <select th:field="*{factorRh}" class="form-select">
+                                            <option value="" disabled>-- Seleccione factor --</option>
+                                            <option th:each="f : ${factores}"
+                                                    th:value="${f}"
+                                                    th:text="${f == T(com.utn.santafe.gestion_licencias.model.titular.FactorRh).POS ? 'Positivo (+)' : 'Negativo (-)'}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3 d-flex align-items-end">
+                                        <div class="form-check form-switch">
+                                            <input type="checkbox" th:field="*{donanteOrganos}"
+                                                   class="form-check-input" id="donante" style="transform: scale(1.2);">
+                                            <label class="form-check-label ms-2" for="donante">
+                                                <i class="bi bi-heart-fill text-danger me-1"></i>
+                                                <strong>Donante de Órganos</strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- FACTOR RH -->
-                        <div class="mb-3">
-                            <label class="form-label">Factor RH</label>
-                            <select th:field="*{factorRh}" class="form-select">
-                                <option th:each="f : ${factores}"
-                                        th:value="${f}"
-                                        th:text="${f == T(com.utn.santafe.gestion_licencias.model.titular.FactorRh).POS ? '+' : '-'}"></option>
-                            </select>
-                        </div>
+                            <!-- Botones de acción -->
+                            <div class="d-grid gap-3">
+                                <button class="btn btn-primary btn-lg" type="submit">
+                                    <i th:class="${titular.id == null ? 'bi bi-check-circle me-2' : 'bi bi-arrow-clockwise me-2'}"></i>
+                                    <span th:text="${titular.id == null ? 'Guardar Titular' : 'Actualizar Titular'}">Guardar</span>
+                                </button>
+                                <a th:href="@{/titulares/lista}" class="btn btn-secondary btn-lg">
+                                    <i class="bi bi-arrow-left me-2"></i>
+                                    Cancelar
+                                </a>
+                            </div>
 
-                        <!-- DONANTE -->
-                        <div class="form-check mb-4">
-                            <input type="checkbox" th:field="*{donanteOrganos}"
-                                   class="form-check-input" id="donante">
-                            <label class="form-check-label" for="donante">Donante de Órganos</label>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-primary btn-lg" type="submit"
-                                    th:text="${titular.id == null ? 'Guardar' : 'Actualizar'}">
-                                Guardar
-                            </button>
-                            <a th:href="@{/titulares/lista}" class="btn btn-secondary btn-lg">
-                                Cancelar
-                            </a>
-                        </div>
-
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 </body>
 </html>

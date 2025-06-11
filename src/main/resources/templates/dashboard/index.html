@@ -57,7 +57,7 @@
             </div>
         </div>
 
-        <div class="col-xl-3 col-md-6 mb-4" sec:authorize="hasRole('SUPERUSER')">
+        <div class="col-xl-3 col-md-6 mb-4" sec:authorize="hasAnyRole('SUPERUSER', 'ADMIN_CON_PERMISOS')">
             <div class="card border-left-success shadow h-100 py-2" style="border-left: 4px solid #28a745;">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <div class="col-xl-3 col-md-6 mb-4" sec:authorize="hasRole('SUPERUSER')">
+        <div class="col-xl-3 col-md-6 mb-4" sec:authorize="hasAnyRole('SUPERUSER', 'ADMIN_CON_PERMISOS')">
             <div class="card border-left-warning shadow h-100 py-2" style="border-left: 4px solid #ffc107;">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -123,29 +123,29 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6 mb-3" sec:authorize="hasRole('SUPERUSER')">
+                        <div class="col-md-6 mb-3" sec:authorize="hasAnyRole('SUPERUSER', 'ADMIN_CON_PERMISOS')">
                             <a href="/usuarios/nuevo" class="btn btn-primary btn-lg w-100">
                                 <i class="bi bi-person-plus"></i>
                                 <br>Crear Usuario
                             </a>
                         </div>
-                        <div class="col-md-6 mb-3" sec:authorize="hasRole('SUPERUSER')">
+                        <div class="col-md-6 mb-3" sec:authorize="hasAnyRole('SUPERUSER', 'ADMIN_CON_PERMISOS')">
                             <a href="/usuarios" class="btn btn-info btn-lg w-100">
                                 <i class="bi bi-people"></i>
                                 <br>Ver Usuarios
                             </a>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <button class="btn btn-success btn-lg w-100" disabled>
-                                <i class="bi bi-plus-circle"></i>
-                                <br>Nueva Licencia
-                            </button>
+                            <a href="/" class="btn btn-success btn-lg w-100">
+                                <i class="bi bi-house"></i>
+                                <br>Menú Principal
+                            </a>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <button class="btn btn-warning btn-lg w-100" disabled>
-                                <i class="bi bi-search"></i>
-                                <br>Consultar Trámite
-                            </button>
+                            <a href="/" class="btn btn-warning btn-lg w-100">
+                                <i class="bi bi-arrow-left"></i>
+                                <br>Acceder a Menú Principal
+                            </a>
                         </div>
                     </div>
                 </div>

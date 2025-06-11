@@ -4,107 +4,247 @@
       layout:decorate="~{base}">
 <head>
     <title>Renovar Licencia</title>
+    <style>
+        .form-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .form-header {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem 0.5rem 0 0;
+            margin: -1.5rem -1.5rem 2rem -1.5rem;
+        }
+        .info-card {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 1px solid #2196f3;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .info-card .card-header {
+            background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            margin: -1.5rem -1.5rem 1rem -1.5rem;
+            font-weight: 600;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40,167,69,0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40,167,69,0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108,117,125,0.4);
+        }
+        .alert {
+            border: none;
+            border-radius: 0.5rem;
+            padding: 1rem 1.5rem;
+        }
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+        }
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        .data-item:last-child {
+            border-bottom: none;
+        }
+        .data-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        .data-value {
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
 <div layout:fragment="content">
-    <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-6">
-            <div class="card shadow rounded-3">
-                <div class="card-body">
-                    <h2 class="text-center mb-4">Renovar Licencia</h2>
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card form-card shadow-lg">
+                    <div class="card-body p-4">
+                        <div class="form-header text-center">
+                            <i class="bi bi-arrow-clockwise display-4 mb-3"></i>
+                            <h2 class="mb-0">Renovar Licencia</h2>
+                            <p class="mb-0 opacity-75">Actualice la licencia con nueva vigencia</p>
+                        </div>
 
-                    <!-- Mostrar datos de la licencia actual -->
-                    <div class="mb-4">
-                        <div class="card border-secondary">
-                            <div class="card-header bg-light">
+                        <!-- Mostrar datos de la licencia actual -->
+                        <div class="info-card">
+                            <div class="card-header">
+                                <i class="bi bi-info-circle me-2"></i>
                                 Datos de la licencia actual (ID: <span th:text="${licenciaActual.id}">—</span>)
                             </div>
-                            <div class="card-body">
-                                <div class="row mb-2">
-                                    <div class="col-6">
-                                        <p class="mb-1"><strong>Titular:</strong>
-                                            <span th:text="${licenciaActual.titular.apellido} + ' ' + ${licenciaActual.titular.nombre}">Apellido Nombre</span>
-                                        </p>
-                                        <p class="mb-1"><strong>Clase actual:</strong>
-                                            <span th:text="${licenciaActual.clase}">CLASE</span>
-                                        </p>
-                                        <p class="mb-1"><strong>Fecha Emisión:</strong>
-                                            <span th:text="${licenciaActual.fechaEmision}">2025-01-01</span>
-                                        </p>
-                                        <p class="mb-0"><strong>Fecha Vencimiento:</strong>
-                                            <span th:text="${licenciaActual.fechaVencimiento}">2030-01-01</span>
-                                        </p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="data-item">
+                                        <span class="data-label">
+                                            <i class="bi bi-person me-1"></i>
+                                            Titular:
+                                        </span>
+                                        <span class="data-value" th:text="${licenciaActual.titular.apellido} + ' ' + ${licenciaActual.titular.nombre}">Apellido Nombre</span>
                                     </div>
-                                    <div class="col-6">
-                                        <p class="mb-1"><strong>Usuario Admin:</strong>
-                                            <span th:text="${licenciaActual.usuarioAdmin}">admin</span>
-                                        </p>
-                                        <p class="mb-1"><strong>Observaciones:</strong>
-                                            <span th:text="${licenciaActual.observaciones}">Sin observaciones</span>
-                                        </p>
-                                        <p class="mb-0"><strong>Vigente:</strong>
-                                            <span th:text="${licenciaActual.vigente} ? 'Sí' : 'No'">Sí</span>
-                                        </p>
+                                    <div class="data-item">
+                                        <span class="data-label">
+                                            <i class="bi bi-award me-1"></i>
+                                            Clase actual:
+                                        </span>
+                                        <span class="data-value" th:text="${licenciaActual.clase}">CLASE</span>
+                                    </div>
+                                    <div class="data-item">
+                                        <span class="data-label">
+                                            <i class="bi bi-calendar-plus me-1"></i>
+                                            Fecha Emisión:
+                                        </span>
+                                        <span class="data-value" th:text="${licenciaActual.fechaEmision}">2025-01-01</span>
+                                    </div>
+                                    <div class="data-item">
+                                        <span class="data-label">
+                                            <i class="bi bi-calendar-x me-1"></i>
+                                            Fecha Vencimiento:
+                                        </span>
+                                        <span class="data-value" th:text="${licenciaActual.fechaVencimiento}">2030-01-01</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="data-item">
+                                        <span class="data-label">
+                                            <i class="bi bi-person-badge me-1"></i>
+                                            Usuario Admin:
+                                        </span>
+                                        <span class="data-value" th:text="${licenciaActual.usuarioAdmin}">admin</span>
+                                    </div>
+                                    <div class="data-item">
+                                        <span class="data-label">
+                                            <i class="bi bi-chat-text me-1"></i>
+                                            Observaciones:
+                                        </span>
+                                        <span class="data-value" th:text="${licenciaActual.observaciones ?: 'Sin observaciones'}">Sin observaciones</span>
+                                    </div>
+                                    <div class="data-item">
+                                        <span class="data-label">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Vigente:
+                                        </span>
+                                        <span class="data-value">
+                                            <span th:if="${licenciaActual.vigente}" class="badge bg-success">Sí</span>
+                                            <span th:if="${!licenciaActual.vigente}" class="badge bg-secondary">No</span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <form th:action="@{/licencias/{id}/renovar(id=${licenciaActual.id})}"
+                              th:object="${licenciaForm}"
+                              method="post"
+                              autocomplete="off">
+
+                            <!-- Campo oculto que envía el ID del titular -->
+                            <input type="hidden" th:field="*{titularId}" />
+
+                            <!-- Errores globales (negocio) -->
+                            <div th:if="${#fields.hasErrors('*')}"
+                                 class="alert alert-danger mb-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <strong>Errores encontrados:</strong>
+                                </div>
+                                <ul class="mb-0 mt-2">
+                                    <li th:each="err : ${#fields.globalErrors()}"
+                                        th:text="${err}"></li>
+                                </ul>
+                            </div>
+
+                            <!-- Select de clases -->
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="bi bi-award me-1"></i>
+                                    Nueva Clase de Licencia
+                                </label>
+                                <select th:field="*{clase}" class="form-select">
+                                    <option value="" disabled>-- Seleccione una clase --</option>
+                                    <option th:each="c : ${clases}"
+                                            th:value="${c}"
+                                            th:text="${c}"></option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('clase')}"
+                                     class="text-danger small mt-1"
+                                     th:errors="*{clase}"></div>
+                            </div>
+
+                            <!-- Textarea observaciones -->
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="bi bi-chat-text me-1"></i>
+                                    Observaciones
+                                </label>
+                                <textarea th:field="*{observaciones}"
+                                          class="form-control"
+                                          rows="4"
+                                          placeholder="Motivo de la renovación u observaciones adicionales (opcional, máximo 255 caracteres)"></textarea>
+                                <div th:if="${#fields.hasErrors('observaciones')}"
+                                     class="text-danger small mt-1"
+                                     th:errors="*{observaciones}"></div>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="d-grid gap-3">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>
+                                    Renovar Licencia
+                                </button>
+                                <a th:href="@{/titulares/lista}" class="btn btn-secondary btn-lg">
+                                    <i class="bi bi-arrow-left me-2"></i>
+                                    Cancelar
+                                </a>
+                            </div>
+
+                        </form>
                     </div>
-
-                    <form th:action="@{/licencias/{id}/renovar(id=${licenciaActual.id})}"
-                          th:object="${licenciaForm}"
-                          method="post"
-                          autocomplete="off">
-
-                        <!-- Campo oculto que envía el ID del titular -->
-                        <input type="hidden" th:field="*{titularId}" />
-
-                        <!-- Errores globales (negocio) -->
-                        <div th:if="${#fields.hasErrors('*')}"
-                             class="alert alert-danger mb-3">
-                            <ul class="mb-0">
-                                <li th:each="err : ${#fields.globalErrors()}"
-                                    th:text="${err}"></li>
-                            </ul>
-                        </div>
-
-                        <!-- Select de clases -->
-                        <div class="mb-3">
-                            <label class="form-label">Nueva Clase de Licencia</label>
-                            <select th:field="*{clase}" class="form-select">
-                                <option value="" disabled>-- Seleccione --</option>
-                                <option th:each="c : ${clases}"
-                                        th:value="${c}"
-                                        th:text="${c}"></option>
-                            </select>
-                            <div th:if="${#fields.hasErrors('clase')}"
-                                 class="text-danger small"
-                                 th:errors="*{clase}"></div>
-                        </div>
-
-                        <!-- Textarea observaciones -->
-                        <div class="mb-3">
-                            <label class="form-label">Observaciones</label>
-                            <textarea th:field="*{observaciones}"
-                                      class="form-control"
-                                      rows="3"
-                                      placeholder="Opcional, máximo 255 caracteres"></textarea>
-                            <div th:if="${#fields.hasErrors('observaciones')}"
-                                 class="text-danger small"
-                                 th:errors="*{observaciones}"></div>
-                        </div>
-
-                        <!-- Botones anchos -->
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                Renovar Licencia
-                            </button>
-                            <a th:href="@{/titulares/lista}" class="btn btn-secondary btn-lg">
-                                Cancelar
-                            </a>
-                        </div>
-
-                    </form>
                 </div>
             </div>
         </div>
