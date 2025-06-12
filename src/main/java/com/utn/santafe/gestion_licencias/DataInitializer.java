@@ -28,7 +28,7 @@ public class DataInitializer implements CommandLineRunner {
                     Sexo.MASCULINO,
                     "Calle Falsa 123, Santa Fe",
                     "superuser@sistema.com",
-                    "3426777888",
+                    "3426789456",
                     "admin123",
                     Rol.SUPERUSER
             );
