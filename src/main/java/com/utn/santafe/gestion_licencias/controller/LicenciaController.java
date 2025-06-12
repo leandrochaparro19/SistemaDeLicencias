@@ -161,4 +161,76 @@ public class LicenciaController {
         ra.addFlashAttribute("success", "Licencia renovada (ID: " + renovada.getId() + ")");
         return "redirect:/licencias/" + renovada.getId() + "/imprimirLicencia";
     }
+
+    @GetMapping("/duplicar/{licenciaId}") // Pasamos el ID de la licencia a duplicar
+    public String nuevaLicenciaDuplicado(@PathVariable Long licenciaId, Model model) {
+        Licencia licenciaOriginal = licenciaService.buscarPorId(licenciaId);
+        if (licenciaOriginal == null) {
+            throw new EntityNotFoundException("La licencia original no existe");
+        }
+
+        Titular t = licenciaOriginal.getTitular();
+        if (t == null) {
+            throw new EntityNotFoundException("El titular asociado a la licencia no existe");
+        }
+
+        LicenciaForm form = new LicenciaForm();
+        form.setTitularId(t.getId());
+        form.setClase(licenciaOriginal.getClase());
+        form.setObservaciones(licenciaOriginal.getObservaciones());
+
+        model.addAttribute("titular", t);
+        model.addAttribute("licenciaOriginal", licenciaOriginal);
+        model.addAttribute("clases", ClaseLicencia.values());
+        model.addAttribute("licenciaForm", form);
+        return "licencias/formDuplicadoLicencia";
+    }
+
+    @PostMapping("/guardarDuplicado")
+    public String guardarDuplicadoLicencia(@Valid @ModelAttribute("licenciaForm") LicenciaForm form, BindingResult br,
+                                           Model model, RedirectAttributes ra,
+                                           @AuthenticationPrincipal UserDetails currentUser) { // Inyectar usuario directamente
+        // Bloque 1: Manejo de ERRORES DE VALIDACIÓN del formulario
+        if (br.hasErrors()) {
+            model.addAttribute("clases", ClaseLicencia.values());
+            try {
+                Titular t = titularRepository.findById(form.getTitularId())
+                        .orElseThrow(() -> new EntityNotFoundException("Titular no existe"));
+                model.addAttribute("titular", t);
+            } catch (EntityNotFoundException ex) {
+                model.addAttribute("errorMessage", "Error interno: Titular no encontrado al recargar el formulario.");
+            }
+            return "licencias/formDuplicadoLicencia";
+        }
+
+        // Verificar que haya usuario autenticado
+        if (currentUser == null) {
+            ra.addFlashAttribute("error", "Usuario no autenticado");
+            return "redirect:/login";
+        }
+
+        // Bloque 2: Intento de ejecución de la LÓGICA DE NEGOCIO (emitirDuplicado)
+        try {
+            Licencia duplicada = licenciaService.emitirDuplicado(
+                    form.getTitularId(),
+                    form.getClase(),
+                    form.getObservaciones(),
+                    currentUser.getUsername());  // El username es el DNI
+            ra.addFlashAttribute("successMessage",
+                    "Duplicado de licencia emitido exitosamente! ID: " + duplicada.getId());
+            return "redirect:/licencias/" + duplicada.getId() + "/imprimirLicencia";
+
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("clases", ClaseLicencia.values());
+            try {
+                Titular t = titularRepository.findById(form.getTitularId())
+                        .orElseThrow(() -> new EntityNotFoundException("Titular no existe"));
+                model.addAttribute("titular", t);
+            } catch (EntityNotFoundException ex) {
+                model.addAttribute("errorMessage", "Error interno: Titular no encontrado al recargar el formulario.");
+            }
+            return "licencias/formDuplicadoLicencia";
+        }
+    }
 }
