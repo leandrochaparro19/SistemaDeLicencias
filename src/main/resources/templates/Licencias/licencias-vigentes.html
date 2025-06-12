@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+  <title>Licencias Vigentes</title>
+  <style>
+    .main-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+      border: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .card-header-custom {
+      background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 0.5rem 0.5rem 0 0;
+      margin: -1.5rem -1.5rem 2rem -1.5rem;
+    }
+    .filter-section {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid #dee2e6;
+    }
+    .filter-title {
+      color: #495057;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #28a745;
+    }
+    .form-control, .form-select {
+      border: 2px solid #e9ecef;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      transition: all 0.3s ease;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #28a745;
+      box-shadow: 0 0 0 0.2rem rgba(40,167,69,0.25);
+    }
+    .form-check-input:checked {
+      background-color: #28a745;
+      border-color: #28a745;
+    }
+    .form-check-input:focus {
+      box-shadow: 0 0 0 0.2rem rgba(40,167,69,0.25);
+    }
+    .btn-filter {
+      background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      color: white;
+    }
+    .btn-filter:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(40,167,69,0.4);
+    }
+    .btn-clear {
+      background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      color: white;
+    }
+    .btn-clear:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(108,117,125,0.4);
+    }
+    .table {
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .table thead th {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border: none;
+      font-weight: 600;
+      color: #495057;
+      padding: 1rem 0.75rem;
+    }
+    .table tbody td {
+      padding: 1rem 0.75rem;
+      vertical-align: middle;
+      border-color: #f1f3f4;
+    }
+    .table tbody tr:hover {
+      background-color: rgba(40,167,69,0.05);
+      transform: scale(1.01);
+      transition: all 0.2s ease;
+    }
+    .badge {
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+    }
+    .badge-active {
+      background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+      color: white;
+    }
+    .navigation-buttons {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-top: 1.5rem;
+    }
+    .btn-nav {
+      padding: 0.5rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .btn-nav:hover {
+      transform: translateY(-2px);
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #6c757d;
+    }
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+    .days-remaining {
+      font-weight: bold;
+      color: #28a745;
+    }
+    .rh-badge {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: white;
+    }
+    .rh-positive { background-color: #dc3545; }
+    .rh-negative { background-color: #007bff; }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="container-fluid py-4">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <div class="card main-card shadow-lg">
+          <div class="card-body p-4">
+            <div class="card-header-custom text-center">
+              <i class="bi bi-check-circle display-4 mb-3"></i>
+              <h2 class="mb-0">Licencias Vigentes</h2>
+              <p class="mb-0 opacity-75">Listado de licencias actualmente vigentes</p>
+            </div>
+
+            <!-- Sección de filtros -->
+            <div class="filter-section">
+              <h5 class="filter-title">
+                <i class="bi bi-funnel me-2"></i>
+                Filtros de búsqueda
+              </h5>
+
+              <form th:action="@{/licencias/vigentes}" method="get" class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Nombre o Apellido del Titular</label>
+                  <input type="text" class="form-control" name="nombreApellido" th:value="${filtroNombreApellido}" placeholder="Buscar por nombre o apellido">
+                </div>
+
+                <div class="col-md-3">
+                  <label class="form-label">Grupo Sanguíneo</label>
+                  <select class="form-select" name="grupoSanguineo">
+                    <option value="">Todos los grupos</option>
+                    <option th:each="g : ${grupos}"
+                            th:value="${g}"
+                            th:text="${g}"
+                            th:selected="${g == filtroGrupoSanguineo}"></option>
+                  </select>
+                </div>
+
+                <div class="col-md-3">
+                  <label class="form-label">Factor RH</label>
+                  <select class="form-select" name="factorRh">
+                    <option value="">Todos los factores</option>
+                    <option th:each="f : ${factores}"
+                            th:value="${f}"
+                            th:text="${f == T(com.utn.santafe.gestion_licencias.model.titular.FactorRh).POS ? 'Positivo (+)' : 'Negativo (-)'}"
+                            th:selected="${f == filtroFactorRh}"></option>
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-check form-switch mt-4">
+                    <input class="form-check-input" type="checkbox" id="donanteOrganos" name="donanteOrganos" value="true" th:checked="${filtroDonanteOrganos == true}">
+                    <label class="form-check-label" for="donanteOrganos">
+                      <i class="bi bi-heart-fill text-danger me-1"></i>
+                      Solo mostrar donantes de órganos
+                    </label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 d-flex justify-content-end gap-2 mt-4">
+                  <a th:href="@{/licencias/vigentes}" class="btn btn-clear">
+                    <i class="bi bi-x-circle me-2"></i>Limpiar filtros
+                  </a>
+                  <button type="submit" class="btn btn-filter">
+                    <i class="bi bi-search me-2"></i>Buscar
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Tabla de resultados -->
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                  <th><i class="bi bi-person me-1"></i>Titular</th>
+                  <th><i class="bi bi-card-text me-1"></i>DNI</th>
+                  <th><i class="bi bi-award me-1"></i>Clase</th>
+                  <th><i class="bi bi-droplet me-1"></i>Grupo</th>
+                  <th><i class="bi bi-plus-slash-minus me-1"></i>RH</th>
+                  <th><i class="bi bi-heart me-1"></i>Donante</th>
+                  <th><i class="bi bi-calendar-check me-1"></i>Vencimiento</th>
+                  <th><i class="bi bi-gear me-1"></i>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="licencia : ${licenciasVigentes}">
+                  <td>
+                    <strong th:text="${licencia.titular.apellido + ', ' + licencia.titular.nombre}"></strong>
+                  </td>
+                  <td th:text="${licencia.titular.numeroDocumento}"></td>
+                  <td>
+                    <span class="badge bg-info text-dark" th:text="${licencia.clase}"></span>
+                  </td>
+                  <td>
+                    <span class="badge bg-warning text-dark" th:text="${licencia.titular.grupoSanguineo}"></span>
+                  </td>
+                  <td>
+                                        <span th:class="${licencia.titular.factorRh == T(com.utn.santafe.gestion_licencias.model.titular.FactorRh).POS ? 'rh-badge rh-positive' : 'rh-badge rh-negative'}"
+                                              th:text="${licencia.titular.factorRh == T(com.utn.santafe.gestion_licencias.model.titular.FactorRh).POS ? '+' : '-'}"></span>
+                  </td>
+                  <td>
+                                        <span th:if="${licencia.titular.donanteOrganos}" class="badge bg-success">
+                                            <i class="bi bi-heart-fill me-1"></i>Sí
+                                        </span>
+                    <span th:if="${!licencia.titular.donanteOrganos}" class="badge bg-secondary">
+                                            <i class="bi bi-heart me-1"></i>No
+                                        </span>
+                  </td>
+                  <td>
+                    <span class="badge badge-active" th:text="${#temporals.format(licencia.fechaVencimiento, 'dd/MM/yyyy')}"></span>
+                    <div class="small mt-1">
+                      <span class="days-remaining" th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), licencia.fechaVencimiento)}"></span> días restantes
+                    </div>
+                  </td>
+                  <td class="text-nowrap">
+                    <a th:href="@{/licencias/{id}/imprimirLicencia(id=${licencia.id})}"
+                       class="btn btn-outline-primary btn-sm"
+                       data-bs-toggle="tooltip"
+                       title="Ver Licencia">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    <a th:href="@{/licencias/{id}/renovar(id=${licencia.id})}"
+                       class="btn btn-outline-success btn-sm"
+                       data-bs-toggle="tooltip"
+                       title="Renovar Licencia">
+                      <i class="bi bi-arrow-clockwise"></i>
+                    </a>
+                    <a th:href="@{/licencias/duplicar/{id}(id=${licencia.id})}"
+                       class="btn btn-outline-info btn-sm"
+                       data-bs-toggle="tooltip"
+                       title="Emitir Duplicado">
+                      <i class="bi bi-files"></i>
+                    </a>
+                  </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(licenciasVigentes)}">
+                  <td colspan="8">
+                    <div class="empty-state">
+                      <i class="bi bi-search"></i>
+                      <h5>No se encontraron licencias vigentes</h5>
+                      <p class="mb-0">No hay licencias vigentes que coincidan con los criterios de búsqueda</p>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="navigation-buttons d-flex justify-content-between align-items-center">
+              <a th:href="@{/licencias/lista}" class="btn btn-secondary btn-nav">
+                <i class="bi bi-arrow-left me-2"></i>Volver al listado
+              </a>
+              <a th:href="@{/}" class="btn btn-primary btn-nav">
+                <i class="bi bi-house me-2"></i>Ir al inicio
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -26,6 +26,13 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import com.utn.santafe.gestion_licencias.model.titular.GrupoSanguineo;
+import com.utn.santafe.gestion_licencias.model.titular.FactorRh;
+import org.springframework.format.annotation.DateTimeFormat;
+
 @Slf4j
 @Controller
 @RequestMapping("/licencias")
@@ -232,5 +239,58 @@ public class LicenciaController {
             }
             return "licencias/formDuplicadoLicencia";
         }
+    }
+
+    @GetMapping("/expiradas")
+    public String listarLicenciasExpiradas(
+            @RequestParam(required = false) String usuarioAdmin,
+            @RequestParam(required = false) ClaseLicencia clase,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
+            Model model) {
+
+        List<Licencia> licenciasExpiradas;
+
+        if (usuarioAdmin != null || clase != null || fechaDesde != null || fechaHasta != null) {
+            licenciasExpiradas = licenciaService.filtrarLicenciasExpiradas(usuarioAdmin, clase, fechaDesde, fechaHasta);
+        } else {
+            licenciasExpiradas = licenciaService.listarLicenciasExpiradas();
+        }
+
+        model.addAttribute("licenciasExpiradas", licenciasExpiradas);
+        model.addAttribute("clases", ClaseLicencia.values());
+        model.addAttribute("filtroUsuarioAdmin", usuarioAdmin);
+        model.addAttribute("filtroClase", clase);
+        model.addAttribute("filtroFechaDesde", fechaDesde);
+        model.addAttribute("filtroFechaHasta", fechaHasta);
+
+        return "licencias/licencias-expiradas";
+    }
+
+    @GetMapping("/vigentes")
+    public String listarLicenciasVigentes(
+            @RequestParam(required = false) String nombreApellido,
+            @RequestParam(required = false) GrupoSanguineo grupoSanguineo,
+            @RequestParam(required = false) FactorRh factorRh,
+            @RequestParam(required = false) Boolean donanteOrganos,
+            Model model) {
+
+        List<Licencia> licenciasVigentes;
+
+        if (nombreApellido != null || grupoSanguineo != null || factorRh != null || donanteOrganos != null) {
+            licenciasVigentes = licenciaService.filtrarLicenciasVigentes(nombreApellido, grupoSanguineo, factorRh, donanteOrganos);
+        } else {
+            licenciasVigentes = licenciaService.listarLicenciasVigentes();
+        }
+
+        model.addAttribute("licenciasVigentes", licenciasVigentes);
+        model.addAttribute("grupos", GrupoSanguineo.values());
+        model.addAttribute("factores", FactorRh.values());
+        model.addAttribute("filtroNombreApellido", nombreApellido);
+        model.addAttribute("filtroGrupoSanguineo", grupoSanguineo);
+        model.addAttribute("filtroFactorRh", factorRh);
+        model.addAttribute("filtroDonanteOrganos", donanteOrganos);
+
+        return "licencias/licencias-vigentes";
     }
 }

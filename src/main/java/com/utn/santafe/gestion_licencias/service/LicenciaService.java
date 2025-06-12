@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import com.utn.santafe.gestion_licencias.model.licencia.Licencia;
 import com.utn.santafe.gestion_licencias.model.licencia.tipoEmision;
 import com.utn.santafe.gestion_licencias.model.titular.ClaseLicencia;
+import com.utn.santafe.gestion_licencias.model.titular.FactorRh;
+import com.utn.santafe.gestion_licencias.model.titular.GrupoSanguineo;
 import com.utn.santafe.gestion_licencias.model.titular.Titular;
 import com.utn.santafe.gestion_licencias.repository.LicenciaRepository;
 import com.utn.santafe.gestion_licencias.repository.TitularRepository;
@@ -120,7 +123,7 @@ public class LicenciaService {
     }
 
     public Licencia renovarLicencia(Long licenciaAnteriorId, ClaseLicencia nuevaClase, String obs,
-            String usuarioAdmin) {
+                                    String usuarioAdmin) {
 
         // 1. Obtener la licencia anterior y el titular asociado
         Licencia anterior = licenciaRepository.findById(licenciaAnteriorId)
@@ -214,5 +217,121 @@ public class LicenciaService {
 
     public BigDecimal calcularCostoLicencia(ClaseLicencia clase, int anios) {
         return clase.tarifaParaVigencia(anios).add(COSTO_ADMIN);
+    }
+
+    // Métodos para licencias expiradas
+    public List<Licencia> listarLicenciasExpiradas() {
+        return licenciaRepository.findByFechaVencimientoBeforeOrderByFechaVencimientoDesc(LocalDate.now());
+    }
+
+    public List<Licencia> filtrarLicenciasExpiradas(String usuarioAdmin, ClaseLicencia clase, LocalDate fechaDesde, LocalDate fechaHasta) {
+        LocalDate hoy = LocalDate.now();
+
+        // Sin filtros
+        if ((usuarioAdmin == null || usuarioAdmin.isEmpty()) && clase == null && fechaDesde == null && fechaHasta == null) {
+            return listarLicenciasExpiradas();
+        }
+
+        // Solo filtro de usuario
+        if ((usuarioAdmin != null && !usuarioAdmin.isEmpty()) && clase == null && fechaDesde == null && fechaHasta == null) {
+            return licenciaRepository.findByFechaVencimientoBeforeAndUsuarioAdminContainingIgnoreCaseOrderByFechaVencimientoDesc(hoy, usuarioAdmin);
+        }
+
+        // Solo filtro de clase
+        if ((usuarioAdmin == null || usuarioAdmin.isEmpty()) && clase != null && fechaDesde == null && fechaHasta == null) {
+            return licenciaRepository.findByFechaVencimientoBeforeAndClaseOrderByFechaVencimientoDesc(hoy, clase);
+        }
+
+        // Solo filtro de fechas
+        if ((usuarioAdmin == null || usuarioAdmin.isEmpty()) && clase == null && fechaDesde != null && fechaHasta != null) {
+            return licenciaRepository.findByFechaVencimientoBeforeAndFechaVencimientoBetweenOrderByFechaVencimientoDesc(hoy, fechaDesde, fechaHasta);
+        }
+
+        // Filtro de usuario y clase
+        if ((usuarioAdmin != null && !usuarioAdmin.isEmpty()) && clase != null && fechaDesde == null && fechaHasta == null) {
+            return licenciaRepository.findByFechaVencimientoBeforeAndUsuarioAdminContainingIgnoreCaseAndClaseOrderByFechaVencimientoDesc(hoy, usuarioAdmin, clase);
+        }
+
+        // Filtro de usuario y fechas
+        if ((usuarioAdmin != null && !usuarioAdmin.isEmpty()) && clase == null && fechaDesde != null && fechaHasta != null) {
+            return licenciaRepository.findByFechaVencimientoBeforeAndUsuarioAdminContainingIgnoreCaseAndFechaVencimientoBetweenOrderByFechaVencimientoDesc(hoy, usuarioAdmin, fechaDesde, fechaHasta);
+        }
+
+        // Filtro de clase y fechas
+        if ((usuarioAdmin == null || usuarioAdmin.isEmpty()) && clase != null && fechaDesde != null && fechaHasta != null) {
+            return licenciaRepository.findByFechaVencimientoBeforeAndClaseAndFechaVencimientoBetweenOrderByFechaVencimientoDesc(hoy, clase, fechaDesde, fechaHasta);
+        }
+
+        // Todos los filtros
+        return licenciaRepository.findByFechaVencimientoBeforeAndUsuarioAdminContainingIgnoreCaseAndClaseAndFechaVencimientoBetweenOrderByFechaVencimientoDesc(hoy, usuarioAdmin, clase, fechaDesde, fechaHasta);
+    }
+
+    // Métodos para licencias vigentes con filtros
+    public List<Licencia> listarLicenciasVigentes() {
+        return licenciaRepository.findByVigenteTrue();
+    }
+
+    public List<Licencia> filtrarLicenciasVigentes(String nombreApellido, GrupoSanguineo grupoSanguineo, FactorRh factorRh, Boolean donanteOrganos) {
+        // Sin filtros
+        if ((nombreApellido == null || nombreApellido.isEmpty()) && grupoSanguineo == null && factorRh == null && donanteOrganos == null) {
+            return listarLicenciasVigentes();
+        }
+
+        // Solo filtro por nombre/apellido
+        if ((nombreApellido != null && !nombreApellido.isEmpty()) && grupoSanguineo == null && factorRh == null && donanteOrganos == null) {
+            return licenciaRepository.findByVigenteTrueAndTitular_ApellidoContainingIgnoreCaseOrVigenteTrueAndTitular_NombreContainingIgnoreCase(nombreApellido, nombreApellido);
+        }
+
+        // Solo filtro por grupo sanguíneo
+        if ((nombreApellido == null || nombreApellido.isEmpty()) && grupoSanguineo != null && factorRh == null && donanteOrganos == null) {
+            return licenciaRepository.findByVigenteTrueAndTitular_GrupoSanguineo(grupoSanguineo);
+        }
+
+        // Solo filtro por factor RH
+        if ((nombreApellido == null || nombreApellido.isEmpty()) && grupoSanguineo == null && factorRh != null && donanteOrganos == null) {
+            return licenciaRepository.findByVigenteTrueAndTitular_FactorRh(factorRh);
+        }
+
+        // Solo filtro por donante de órganos
+        if ((nombreApellido == null || nombreApellido.isEmpty()) && grupoSanguineo == null && factorRh == null && donanteOrganos != null) {
+            return licenciaRepository.findByVigenteTrueAndTitular_DonanteOrganos(donanteOrganos);
+        }
+
+        // Filtro por grupo sanguíneo y factor RH
+        if ((nombreApellido == null || nombreApellido.isEmpty()) && grupoSanguineo != null && factorRh != null && donanteOrganos == null) {
+            return licenciaRepository.findByVigenteTrueAndTitular_GrupoSanguineoAndTitular_FactorRh(grupoSanguineo, factorRh);
+        }
+
+        // Para combinaciones más complejas, podríamos usar Specification o QueryDSL
+        // Por ahora, implementaremos una solución simple filtrando en memoria para las combinaciones restantes
+        List<Licencia> resultado = listarLicenciasVigentes();
+
+        if (nombreApellido != null && !nombreApellido.isEmpty()) {
+            String busqueda = nombreApellido.toLowerCase();
+            resultado = resultado.stream()
+                    .filter(l -> l.getTitular().getNombre().toLowerCase().contains(busqueda) ||
+                            l.getTitular().getApellido().toLowerCase().contains(busqueda))
+                    .collect(Collectors.toList());
+        }
+
+        if (grupoSanguineo != null) {
+            resultado = resultado.stream()
+                    .filter(l -> l.getTitular().getGrupoSanguineo() == grupoSanguineo)
+                    .collect(Collectors.toList());
+        }
+
+        if (factorRh != null) {
+            resultado = resultado.stream()
+                    .filter(l -> l.getTitular().getFactorRh() == factorRh)
+                    .collect(Collectors.toList());
+        }
+
+        if (donanteOrganos != null) {
+            resultado = resultado.stream()
+                    .filter(l -> l.getTitular().getDonanteOrganos() == donanteOrganos)
+                    .collect(Collectors.toList());
+        }
+
+        return resultado;
     }
 }
