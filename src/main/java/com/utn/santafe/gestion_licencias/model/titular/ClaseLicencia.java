@@ -6,7 +6,7 @@ public enum ClaseLicencia {
     A(new int[]{40, 30, 25, 20}),
     B(new int[]{40, 30, 25, 20}),
     C(new int[]{47, 35, 30, 23}),
-    D(new int[]{59, 44, 39, 29}),
+    D(new int[]{40, 30, 25, 20}),
     E(new int[]{59, 44, 39, 29}),
     F(new int[]{40, 30, 25, 20}),
     G(new int[]{40, 30, 25, 20});
